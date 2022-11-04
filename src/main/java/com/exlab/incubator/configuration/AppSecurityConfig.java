@@ -18,6 +18,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
             .antMatchers("/test/public").permitAll()
+            .antMatchers("/users/list").permitAll()
             .anyRequest().authenticated();
     }
 
