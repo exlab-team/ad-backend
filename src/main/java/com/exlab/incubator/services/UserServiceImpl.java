@@ -46,12 +46,20 @@ public class UserServiceImpl implements UserService {
         this.roleRepository = roleRepository;
     }
 
+
     @Override
     public ResponseEntity<?> authUser(LoginRequest loginRequest) {
+        System.out.println();
+        System.out.println(">>>First");
+
         Authentication authentication = getAuthentication(loginRequest);
+
+        System.out.println(">>>Second");
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
 
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(),
             userDetails.getPhoneNumber()));
