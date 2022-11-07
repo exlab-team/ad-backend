@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 
@@ -79,16 +80,6 @@ public class User{
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
-    }
-
-    public User(String username, String password, String email, String phoneNumber,
-        PersonalAccount personalAccount, List<Role> roles) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.personalAccount = personalAccount;
-        this.roles = roles;
     }
 
     public User(String username, String password, String email, String phoneNumber,
