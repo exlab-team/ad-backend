@@ -90,16 +90,13 @@ public class UserServiceImpl implements UserService {
     }
 
     private void createAndSaveUser(SignupRequest signupRequest) {
-        Role role = roleRepository.findById(1).get();
-        List<Role> roles = new ArrayList<>();
-        roles.add(role);
-
+        Role userRole = roleRepository.findById(1).get();
 
         User user = new User(signupRequest.getUsername(),
                             passwordEncoder.encode(signupRequest.getPassword()),
                             signupRequest.getEmail(),
                             signupRequest.getPhoneNumber(),
-                            roles);
+                            List.of(userRole));
         userRepository.save(user);
     }
 
