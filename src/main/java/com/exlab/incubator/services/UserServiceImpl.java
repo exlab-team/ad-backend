@@ -6,22 +6,17 @@ import com.exlab.incubator.dto.requests.LoginRequest;
 import com.exlab.incubator.dto.requests.SignupRequest;
 import com.exlab.incubator.dto.responses.JwtResponse;
 import com.exlab.incubator.dto.responses.MessageResponse;
-import com.exlab.incubator.entities.PersonalAccount;
-import com.exlab.incubator.entities.Role;
 import com.exlab.incubator.entities.User;
 import com.exlab.incubator.repositories.RoleRepository;
 import com.exlab.incubator.repositories.UserRepository;
 import com.exlab.incubator.services.interfaces.UserService;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,9 +50,8 @@ public class UserServiceImpl implements UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(),
-            userDetails.getPhoneNumber()));
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),
+            userDetails.getUsername(), userDetails.getEmail(), userDetails.getPhoneNumber()));
     }
 
     @Override
@@ -73,16 +67,6 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(new MessageResponse("User CREATED"));
     }
 
-    @Override
-    public User getUserByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-
-        if (!user.isPresent())
-            throw new UsernameNotFoundException("User with username - " + username + " - not found.");
-
-        return user.get();
-    }
-
 
     private Authentication getAuthentication(LoginRequest loginRequest) {
         return authenticationManager
@@ -90,13 +74,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private void createAndSaveUser(SignupRequest signupRequest) {
-        Role userRole = roleRepository.findById(1).get();
-
-        User user = new User(signupRequest.getUsername(),
-                            passwordEncoder.encode(signupRequest.getPassword()),
-                            signupRequest.getEmail(),
-                            signupRequest.getPhoneNumber(),
-                            List.of(userRole));
+        User user = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
+                             signupRequest.getEmail(), signupRequest.getPhoneNumber(),
+                             List.of(roleRepository.findById(1).get()));
         userRepository.save(user);
     }
 
