@@ -31,6 +31,5 @@ public class RoleRepositoryTest {
         long numberOfRoles = roleRepository.count();
 
         assertEquals(2, numberOfRoles);
-
     }
 }
