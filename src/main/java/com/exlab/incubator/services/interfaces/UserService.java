@@ -10,4 +10,6 @@ public interface UserService {
     ResponseEntity<?> registerUser(SignupRequest signupRequest);
 
     ResponseEntity<?> deleteUserById(int id);
+
+    boolean activateUser(String code);
 }

@@ -11,6 +11,7 @@ import com.exlab.incubator.repositories.RoleRepository;
 import com.exlab.incubator.repositories.UserRepository;
 import com.exlab.incubator.services.interfaces.UserService;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,16 +32,19 @@ public class UserServiceImpl implements UserService {
     private JwtUtils jwtUtils;
 
     private RoleRepository roleRepository;
+    private MailSender mailSender;
 
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-        AuthenticationManager authenticationManager, JwtUtils jwtUtils, RoleRepository roleRepository) {
+        AuthenticationManager authenticationManager, JwtUtils jwtUtils, RoleRepository roleRepository,
+        MailSender mailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.roleRepository = roleRepository;
+        this.mailSender = mailSender;
     }
 
 
@@ -74,10 +79,23 @@ public class UserServiceImpl implements UserService {
             .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     }
 
+    private String classActivationCode = "";
+
     private void createAndSaveUser(SignupRequest signupRequest) {
         User user = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
                              signupRequest.getEmail(), signupRequest.getPhoneNumber(),
                              List.of(roleRepository.findById(1).get()));
+
+
+        //checking null
+        String activationCode = UUID.randomUUID().toString();
+        classActivationCode = activationCode;
+        String message = String.format("Please, visit next link: http://localhost:8080/activate/%s", activationCode);
+        mailSender.send( signupRequest.getEmail(), "Activation code", message);
+
+
+
+
         userRepository.save(user);
     }
 
@@ -88,6 +106,17 @@ public class UserServiceImpl implements UserService {
 
         userRepository.delete(user);
         return ResponseEntity.ok().body(new MessageResponse("DELETED SUCCESSFULLY"));
+    }
+
+
+    public boolean activateUser(String code) {
+
+        if (classActivationCode.equals(code)) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 }

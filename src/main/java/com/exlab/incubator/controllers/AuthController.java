@@ -8,6 +8,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,5 +39,18 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         return userService.registerUser(signupRequest);
+    }
+
+    @GetMapping("/activate/{code}")
+    public String activate(@PathVariable String code) {
+
+        System.out.println(">>> Activation");
+        boolean isActivated = userService.activateUser(code);
+
+        if (isActivated) {
+            return "User successfully activated";
+        } else {
+            return "Activation code is not found!";
+        }
     }
 }
