@@ -4,6 +4,7 @@ package com.exlab.incubator.controllers;
 import com.exlab.incubator.dto.requests.LoginRequest;
 import com.exlab.incubator.dto.requests.SignupRequest;
 import com.exlab.incubator.services.interfaces.UserService;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,13 +29,13 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authUser(@Valid @RequestBody LoginRequest loginRequest) {
         System.out.println(loginRequest);
         return userService.authUser(loginRequest);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         return userService.registerUser(signupRequest);
     }
 }
