@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +79,15 @@ public class UserServiceImpl implements UserService {
                              signupRequest.getEmail(), signupRequest.getPhoneNumber(),
                              List.of(roleRepository.findById(1).get()));
         userRepository.save(user);
+    }
+
+    public ResponseEntity<?> deleteUserById(int id){
+        User user = userRepository
+            .findById(id)
+            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
+
+        userRepository.delete(user);
+        return ResponseEntity.ok().body(new MessageResponse("DELETED SUCCESSFULLY"));
     }
 
 }

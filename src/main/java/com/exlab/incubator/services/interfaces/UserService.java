@@ -8,4 +8,6 @@ public interface UserService {
     ResponseEntity<?> authUser(LoginRequest loginRequest);
 
     ResponseEntity<?> registerUser(SignupRequest signupRequest);
+
+    ResponseEntity<?> deleteUserById(int id);
 }
