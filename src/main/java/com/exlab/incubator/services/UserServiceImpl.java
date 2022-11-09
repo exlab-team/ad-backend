@@ -21,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -69,8 +68,10 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is exist"));
 
         createAndSaveUser(signupRequest);
+        lastCreatedActivationCode = "";
 
-        return ResponseEntity.ok(new MessageResponse("User CREATED"));
+
+        return isEmailVerified ? ResponseEntity.ok(new MessageResponse("User CREATED")) : ResponseEntity.ok(new MessageResponse("The email hasn't been confirmed. The user isn't saved."));
     }
 
 
@@ -79,29 +80,29 @@ public class UserServiceImpl implements UserService {
             .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     }
 
-    ////
-    private String classActivationCode = "";
-    private User savedUser = null;
-    ////
+
+    private String lastCreatedActivationCode = "";
+    private User userReceivedFromSignupRequest = null;
+    private boolean isEmailVerified = false;
+
 
     private void createAndSaveUser(SignupRequest signupRequest) {
-        User user = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
+        isEmailVerified = false;
+        userReceivedFromSignupRequest = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
                              signupRequest.getEmail(), signupRequest.getPhoneNumber(),
                              List.of(roleRepository.findById(1).get()));
 
-
-        //checking null
-        String activationCode = UUID.randomUUID().toString();
-        classActivationCode = activationCode;
-        String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s", activationCode);
-        mailSender.send( signupRequest.getEmail(), "Activation code", message);
-
-        savedUser = userRepository.save(user);
-
-        try {
-            Thread.sleep(60000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (!isEmailVerified) {
+            try {
+                //add NULL checks
+                String activationCode = UUID.randomUUID().toString();
+                lastCreatedActivationCode = activationCode;
+                String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s", activationCode);
+                mailSender.send( signupRequest.getEmail(), "Activation code", message);
+                Thread.sleep(300000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -110,13 +111,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String activateUserString(String code) {
-        System.out.println(">>> Activation");
+
         boolean isActivated = activateUser(code);
 
         if (isActivated) {
+            isEmailVerified = true;
+            userRepository.save(userReceivedFromSignupRequest);
             return "User successfully activated";
         } else {
-            userRepository.delete(savedUser);
+            isEmailVerified = false;
             return "You couldn't confirm your email, so you weren't registered";
         }
     }
@@ -125,7 +128,7 @@ public class UserServiceImpl implements UserService {
 
     public boolean activateUser(String code) {
 
-        if (classActivationCode.equals(code)) {
+        if (lastCreatedActivationCode.equals(code)) {
             return true;
         } else {
             return false;
