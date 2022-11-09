@@ -90,11 +90,14 @@ public class UserServiceImpl implements UserService {
         //checking null
         String activationCode = UUID.randomUUID().toString();
         classActivationCode = activationCode;
-        String message = String.format("Please, visit next link: http://localhost:8080/activate/%s", activationCode);
+        String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s", activationCode);
         mailSender.send( signupRequest.getEmail(), "Activation code", message);
 
-
-
+        try {
+            Thread.sleep(120000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         userRepository.save(user);
     }
