@@ -33,6 +33,10 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     private MailSender mailSender;
 
+    private String lastCreatedActivationCode = "";
+    private User userReceivedFromSignupRequest = null;
+    private boolean isEmailVerified = false;
+
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
@@ -59,6 +63,11 @@ public class UserServiceImpl implements UserService {
             userDetails.getUsername(), userDetails.getEmail(), userDetails.getPhoneNumber()));
     }
 
+    private Authentication getAuthentication(LoginRequest loginRequest) {
+        return authenticationManager
+            .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    }
+
     @Override
     public ResponseEntity<?> registerUser(SignupRequest signupRequest) {
         if (userRepository.existsByUsername(signupRequest.getUsername()))
@@ -70,20 +79,8 @@ public class UserServiceImpl implements UserService {
         createAndSaveUser(signupRequest);
         lastCreatedActivationCode = "";
 
-
         return isEmailVerified ? ResponseEntity.ok(new MessageResponse("User CREATED")) : ResponseEntity.ok(new MessageResponse("The email hasn't been confirmed. The user isn't saved."));
     }
-
-
-    private Authentication getAuthentication(LoginRequest loginRequest) {
-        return authenticationManager
-            .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-    }
-
-
-    private String lastCreatedActivationCode = "";
-    private User userReceivedFromSignupRequest = null;
-    private boolean isEmailVerified = false;
 
 
     private void createAndSaveUser(SignupRequest signupRequest) {
@@ -92,27 +89,29 @@ public class UserServiceImpl implements UserService {
                              signupRequest.getEmail(), signupRequest.getPhoneNumber(),
                              List.of(roleRepository.findById(1).get()));
 
+        sendingAnEmailMessageForEmailVerification(signupRequest.getEmail());
+    }
+
+    private void sendingAnEmailMessageForEmailVerification(String email) {
         if (!isEmailVerified) {
             try {
                 //add NULL checks
                 String activationCode = UUID.randomUUID().toString();
                 lastCreatedActivationCode = activationCode;
                 String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s", activationCode);
-                mailSender.send( signupRequest.getEmail(), "Activation code", message);
+                mailSender.send(email, "Activation code", message);
                 Thread.sleep(300000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
-
     }
 
 
     @Override
-    public String activateUserString(String code) {
+    public String activateUserByCode(String code) {
 
-        boolean isActivated = activateUser(code);
+        boolean isActivated = lastCreatedActivationCode.equals(code) ? true : false;
 
         if (isActivated) {
             isEmailVerified = true;
@@ -125,16 +124,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-    public boolean activateUser(String code) {
-
-        if (lastCreatedActivationCode.equals(code)) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
 
     public ResponseEntity<?> deleteUserById(int id){
         User user = userRepository

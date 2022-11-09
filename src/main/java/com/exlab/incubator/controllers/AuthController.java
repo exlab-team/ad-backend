@@ -43,6 +43,6 @@ public class AuthController {
 
     @GetMapping("/activate/{code}")
     public String activate(@PathVariable String code) {
-        return userService.activateUserString(code);
+        return userService.activateUserByCode(code);
     }
 }
