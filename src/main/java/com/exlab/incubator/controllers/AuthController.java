@@ -43,14 +43,6 @@ public class AuthController {
 
     @GetMapping("/activate/{code}")
     public String activate(@PathVariable String code) {
-
-        System.out.println(">>> Activation");
-        boolean isActivated = userService.activateUser(code);
-
-        if (isActivated) {
-            return "User successfully activated";
-        } else {
-            return "Activation code is not found!";
-        }
+        return userService.activateUserString(code);
     }
 }

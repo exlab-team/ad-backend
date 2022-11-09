@@ -79,7 +79,10 @@ public class UserServiceImpl implements UserService {
             .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     }
 
+    ////
     private String classActivationCode = "";
+    private User savedUser = null;
+    ////
 
     private void createAndSaveUser(SignupRequest signupRequest) {
         User user = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
@@ -93,23 +96,31 @@ public class UserServiceImpl implements UserService {
         String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s", activationCode);
         mailSender.send( signupRequest.getEmail(), "Activation code", message);
 
+        savedUser = userRepository.save(user);
+
         try {
-            Thread.sleep(120000);
+            Thread.sleep(60000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        userRepository.save(user);
+
     }
 
-    public ResponseEntity<?> deleteUserById(int id){
-        User user = userRepository
-            .findById(id)
-            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
 
-        userRepository.delete(user);
-        return ResponseEntity.ok().body(new MessageResponse("DELETED SUCCESSFULLY"));
+    @Override
+    public String activateUserString(String code) {
+        System.out.println(">>> Activation");
+        boolean isActivated = activateUser(code);
+
+        if (isActivated) {
+            return "User successfully activated";
+        } else {
+            userRepository.delete(savedUser);
+            return "You couldn't confirm your email, so you weren't registered";
+        }
     }
+
 
 
     public boolean activateUser(String code) {
@@ -120,6 +131,15 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
+    }
+
+    public ResponseEntity<?> deleteUserById(int id){
+        User user = userRepository
+            .findById(id)
+            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
+
+        userRepository.delete(user);
+        return ResponseEntity.ok().body(new MessageResponse("DELETED SUCCESSFULLY"));
     }
 
 }
