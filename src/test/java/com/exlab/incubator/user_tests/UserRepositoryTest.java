@@ -24,7 +24,7 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    public void testCreateRoles(){
+    public void testCountOfUsers(){
 
         long numberOfUsers = userRepository.count();
 
