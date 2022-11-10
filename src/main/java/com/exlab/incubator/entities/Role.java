@@ -9,7 +9,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -26,10 +25,6 @@ public class Role {
 
     @Column(nullable = false, length = 40)
     private String name;
-
-    public Role(Integer id) {
-        this.id = id;
-    }
 
     public Role(String name) {
         this.name = name;
