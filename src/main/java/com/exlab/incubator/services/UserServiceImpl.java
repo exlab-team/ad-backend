@@ -34,9 +34,6 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     private MailSender mailSender;
 
-    private String lastCreatedActivationCode = "";
-    private User userReceivedFromSignupRequest = null;
-    private boolean isEmailVerified = false;
 
 
     @Autowired
@@ -78,51 +75,54 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is exist"));
 
         createAndSaveUser(signupRequest);
-        lastCreatedActivationCode = "";
 
-        return isEmailVerified ? ResponseEntity.ok(new MessageResponse("User CREATED")) : ResponseEntity.ok(new MessageResponse("The email hasn't been confirmed. The user isn't saved."));
+        return ResponseEntity.ok(new MessageResponse("Mail confirmation is expected"));
     }
 
 
     private void createAndSaveUser(SignupRequest signupRequest) {
-        isEmailVerified = false;
-        userReceivedFromSignupRequest = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
-                             signupRequest.getEmail(), false, new Date(),
-                             List.of(roleRepository.findById(1).get()));
 
-        sendingAnEmailMessageForEmailVerification(signupRequest.getEmail());
+        User user = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
+            signupRequest.getEmail(), false, new Date(),
+            List.of(roleRepository.findById(1).get()));
+
+        sendingAnEmailMessageForEmailVerification(user, signupRequest.getEmail());
     }
 
-    private void sendingAnEmailMessageForEmailVerification(String email) {
-        if (!isEmailVerified) {
-            try {
-                //it is necessary to add NULL checks
-                String activationCode = UUID.randomUUID().toString();
-                lastCreatedActivationCode = activationCode;
-                String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s", activationCode);
-                mailSender.send(email, "Activation code", message);
-                Thread.sleep(300000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    private void sendingAnEmailMessageForEmailVerification(User user, String email) {
+
+        try {
+            //it is necessary to add NULL checks
+            String activationCode = UUID.randomUUID().toString();
+            user.setActivationCode(activationCode);
+            userRepository.save(user);
+
+            String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", user.getUsername(), activationCode);
+            mailSender.send(email, "Activation code", message);
+            Thread.sleep(300000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
     }
 
 
     @Override
-    public String activateUserByCode(String code) {
+    public String activateUserByCode(String username, String code) {
 
-        boolean isActivated = lastCreatedActivationCode.equals(code) ? true : false;
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found."));
 
-        if (isActivated) {
-            isEmailVerified = true;
-            userReceivedFromSignupRequest.setIsConfirmed(true);
-            userRepository.save(userReceivedFromSignupRequest);
+        boolean areTheCodesEqual = user.getActivationCode().equals(code);
+
+        if (areTheCodesEqual && !user.getIsConfirmed()) {
+            user.setIsConfirmed(true);
+            userRepository.save(user);
+            return "Your account has been successfully activated";
+        }else if (areTheCodesEqual && user.getIsConfirmed()){
             return "Your account has been successfully activated";
         } else {
-            isEmailVerified = false;
-            sendingAnEmailMessageForEmailVerification(userReceivedFromSignupRequest.getEmail());
-
+            sendingAnEmailMessageForEmailVerification(user, user.getEmail());
             return "This link is outdated. Check your email for a new one";
         }
     }

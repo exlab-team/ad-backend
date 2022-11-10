@@ -11,5 +11,5 @@ public interface UserService {
 
     ResponseEntity<?> deleteUserById(int id);
 
-    String activateUserByCode(String code);
+    String activateUserByCode(String username, String code);
 }

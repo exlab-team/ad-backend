@@ -49,6 +49,9 @@ public class User{
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(length = 50, name = "activation_code")
+    private String activationCode;
+
     @OneToOne
     @JoinColumn(name = "personal_account_id", referencedColumnName = "id")
     private PersonalAccount personalAccount;
@@ -102,6 +105,17 @@ public class User{
         this.email = email;
         this.isConfirmed = isConfirmed;
         this.createdAt = createdAt;
+        this.roles = roles;
+    }
+
+    public User(String username, String password, String email, Boolean isConfirmed,
+        Date createdAt, String activationCode, List<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.isConfirmed = isConfirmed;
+        this.createdAt = createdAt;
+        this.activationCode = activationCode;
         this.roles = roles;
     }
 
