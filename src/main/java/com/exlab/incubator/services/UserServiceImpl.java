@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
     private void sendingAnEmailMessageForEmailVerification(String email) {
         if (!isEmailVerified) {
             try {
-                //add NULL checks
+                //it is necessary to add NULL checks
                 String activationCode = UUID.randomUUID().toString();
                 lastCreatedActivationCode = activationCode;
                 String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s", activationCode);
@@ -119,6 +119,8 @@ public class UserServiceImpl implements UserService {
             return "User successfully activated";
         } else {
             isEmailVerified = false;
+            sendingAnEmailMessageForEmailVerification(userReceivedFromSignupRequest.getEmail());
+
             return "You couldn't confirm your email, so you weren't registered";
         }
     }
