@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
 
-
     private UserService userService;
 
     @Autowired
@@ -29,10 +28,8 @@ public class AuthController {
         this.userService = userService;
     }
 
-
     @PostMapping("/signin")
     public ResponseEntity<?> authUser(@Valid @RequestBody LoginRequest loginRequest) {
-        System.out.println(loginRequest);
         return userService.authUser(loginRequest);
     }
 
