@@ -116,12 +116,12 @@ public class UserServiceImpl implements UserService {
         if (isActivated) {
             isEmailVerified = true;
             userRepository.save(userReceivedFromSignupRequest);
-            return "User successfully activated";
+            return "Your account has been successfully activated";
         } else {
             isEmailVerified = false;
             sendingAnEmailMessageForEmailVerification(userReceivedFromSignupRequest.getEmail());
 
-            return "You couldn't confirm your email, so you weren't registered";
+            return "This link is outdated. Check your email for a new one";
         }
     }
 
