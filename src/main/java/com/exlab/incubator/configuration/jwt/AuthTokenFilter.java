@@ -1,6 +1,5 @@
 package com.exlab.incubator.configuration.jwt;
 
-
 import com.exlab.incubator.configuration.user_details.UserDetailsServiceImpl;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -19,10 +18,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtils jwtUtils;
-
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-
 
 
     @Override

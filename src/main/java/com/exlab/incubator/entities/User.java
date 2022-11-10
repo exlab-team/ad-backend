@@ -1,5 +1,6 @@
 package com.exlab.incubator.entities;
 
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,8 +40,14 @@ public class User{
     @Column(nullable = false, length = 70, unique = true)
     private String email;
 
-    @Column(nullable = false, length = 30, unique = true, name = "phone_number")
+    @Column(length = 30, unique = true, name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "is_confirmed")
+    private Boolean isConfirmed;
+
+    @Column(name = "created_at")
+    private Date createdAt;
 
     @OneToOne
     @JoinColumn(name = "personal_account_id", referencedColumnName = "id")
@@ -76,6 +84,25 @@ public class User{
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
+    }
+
+    public User(String username, String password, String email, Date createdAt,
+        List<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.createdAt = createdAt;
+        this.roles = roles;
+    }
+
+    public User(String username, String password, String email, boolean isConfirmed,
+        Date createdAt, List<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.isConfirmed = isConfirmed;
+        this.createdAt = createdAt;
+        this.roles = roles;
     }
 
     public User(String username, String password, String email, String phoneNumber,

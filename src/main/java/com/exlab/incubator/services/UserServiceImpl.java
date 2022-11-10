@@ -10,6 +10,7 @@ import com.exlab.incubator.entities.User;
 import com.exlab.incubator.repositories.RoleRepository;
 import com.exlab.incubator.repositories.UserRepository;
 import com.exlab.incubator.services.interfaces.UserService;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +87,7 @@ public class UserServiceImpl implements UserService {
     private void createAndSaveUser(SignupRequest signupRequest) {
         isEmailVerified = false;
         userReceivedFromSignupRequest = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
-                             signupRequest.getEmail(), signupRequest.getPhoneNumber(),
+                             signupRequest.getEmail(), false, new Date(),
                              List.of(roleRepository.findById(1).get()));
 
         sendingAnEmailMessageForEmailVerification(signupRequest.getEmail());
@@ -115,6 +116,7 @@ public class UserServiceImpl implements UserService {
 
         if (isActivated) {
             isEmailVerified = true;
+            userReceivedFromSignupRequest.setIsConfirmed(true);
             userRepository.save(userReceivedFromSignupRequest);
             return "Your account has been successfully activated";
         } else {
