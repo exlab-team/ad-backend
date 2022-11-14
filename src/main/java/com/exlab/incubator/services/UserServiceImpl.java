@@ -95,12 +95,12 @@ public class UserServiceImpl implements UserService {
             //it is necessary to add NULL checks
             String activationCode = UUID.randomUUID().toString();
             user.setActivationCode(activationCode);
-            User savedUser = userRepository.save(user);
+            userRepository.save(user);
 
-            String reversedUsername = new StringBuilder(user.getUsername()).reverse().toString();
+            String encryptUsername = encryptTheUsername(user.getUsername());
 
             String message = String
-                .format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", reversedUsername, activationCode);
+                .format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", encryptUsername, activationCode);
             mailSender.send(email, "Activation code", message);
             Thread.sleep(300000);
         } catch (InterruptedException e) {
@@ -110,19 +110,19 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
+
     @Override
     public String activateUserByCode(String idPlusCode) {
 
         System.out.println(idPlusCode);
 
         int charAt = idPlusCode.indexOf(".");
-        String username = new StringBuilder(idPlusCode.substring(0, charAt)).reverse().toString();
+        String decryptUsername = decryptTheUsername(idPlusCode.substring(0, charAt));
         String code = idPlusCode.substring(charAt + 1);
 
-
-
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found.", username)));
+        User user = userRepository.findByUsername(decryptUsername)
+            .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found.", decryptUsername)));
 
         boolean areTheCodesEqual = user.getActivationCode().equals(code);
 
@@ -136,6 +136,28 @@ public class UserServiceImpl implements UserService {
             sendingAnEmailMessageForEmailVerification(user, user.getEmail());
             return "This link is outdated. Check your email for a new one";
         }
+    }
+
+
+    private String encryptTheUsername(String s){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (char c : s.toCharArray()) {
+            stringBuilder.append(++c);
+        }
+
+        return stringBuilder.toString();
+    }
+
+
+    private String decryptTheUsername(String s){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (char c : s.toCharArray()) {
+            stringBuilder.append(--c);
+        }
+
+        return stringBuilder.toString();
     }
 
 
