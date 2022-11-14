@@ -113,13 +113,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public String activateUserByCode(String idPlusCode) {
-
-        System.out.println(idPlusCode);
-
-        int charAt = idPlusCode.indexOf(".");
-        String decryptUsername = decryptTheUsername(idPlusCode.substring(0, charAt));
-        String code = idPlusCode.substring(charAt + 1);
+    public String activateUserByCode(String usernamePlusCode) {
+        int charAt = usernamePlusCode.indexOf(".");
+        String decryptUsername = decryptTheUsername(usernamePlusCode.substring(0, charAt));
+        String code = usernamePlusCode.substring(charAt + 1);
 
         User user = userRepository.findByUsername(decryptUsername)
             .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found.", decryptUsername)));
@@ -139,23 +136,19 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private String encryptTheUsername(String s){
-        StringBuilder stringBuilder = new StringBuilder();
+    private String encryptTheUsername(String username){
 
-        for (char c : s.toCharArray()) {
-            stringBuilder.append(++c);
-        }
+        StringBuilder stringBuilder = new StringBuilder();
+        username.chars().mapToObj(c -> (char) ++c).forEach(c -> stringBuilder.append(c));
 
         return stringBuilder.toString();
     }
 
 
-    private String decryptTheUsername(String s){
-        StringBuilder stringBuilder = new StringBuilder();
+    private String decryptTheUsername(String username){
 
-        for (char c : s.toCharArray()) {
-            stringBuilder.append(--c);
-        }
+        StringBuilder stringBuilder = new StringBuilder();
+        username.chars().mapToObj(c -> (char) --c).forEach(c -> stringBuilder.append(c));
 
         return stringBuilder.toString();
     }
