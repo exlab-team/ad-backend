@@ -87,17 +87,19 @@ public class UserServiceImpl implements UserService {
             signupRequest.getEmail(), false, new Date(),
             List.of(roleRepository.findById(1).get()));
 
-        sendingAnEmailMessageForEmailVerification(user, signupRequest.getEmail());
+        sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), signupRequest.getEmail());
+    }
+
+    private User getUserWithTheNewActivationCode(User user){
+        String activationCode = UUID.randomUUID().toString();
+        user.setActivationCode(activationCode);
+        return userRepository.save(user);
     }
 
 
     private void sendingAnEmailMessageForEmailVerification(User user, String email) {
-            String activationCode = UUID.randomUUID().toString();
-            user.setActivationCode(activationCode);
-            userRepository.save(user);
-
             String encryptUsername = encryptTheUsername(user.getUsername());
-            String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", encryptUsername, activationCode);
+            String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", encryptUsername, user.getActivationCode());
             mailSender.send(email, "Activation code", message);
     }
 
@@ -120,7 +122,7 @@ public class UserServiceImpl implements UserService {
         }else if (areTheCodesEqual && user.getIsConfirmed()){
             return "Your account has been successfully activated";
         } else {
-            sendingAnEmailMessageForEmailVerification(user, user.getEmail());
+            sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), user.getEmail());
             return "This link is outdated. Check your email for a new one";
         }
     }
