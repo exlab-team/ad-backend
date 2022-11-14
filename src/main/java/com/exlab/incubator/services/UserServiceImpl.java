@@ -90,23 +90,15 @@ public class UserServiceImpl implements UserService {
     }
 
     private void sendingAnEmailMessageForEmailVerification(User user, String email) {
-
-        try {
             //it is necessary to add NULL checks
             String activationCode = UUID.randomUUID().toString();
             user.setActivationCode(activationCode);
             userRepository.save(user);
-
             String encryptUsername = encryptTheUsername(user.getUsername());
 
             String message = String
                 .format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", encryptUsername, activationCode);
             mailSender.send(email, "Activation code", message);
-            Thread.sleep(300000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
     }
 
 
