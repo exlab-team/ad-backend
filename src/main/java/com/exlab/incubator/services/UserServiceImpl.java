@@ -35,7 +35,6 @@ public class UserServiceImpl implements UserService {
     private MailSender mailSender;
 
 
-
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
         AuthenticationManager authenticationManager, JwtUtils jwtUtils, RoleRepository roleRepository,
@@ -61,10 +60,12 @@ public class UserServiceImpl implements UserService {
             userDetails.getUsername(), userDetails.getEmail()));
     }
 
+
     private Authentication getAuthentication(LoginRequest loginRequest) {
         return authenticationManager
             .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     }
+
 
     @Override
     public ResponseEntity<?> registerUser(SignupRequest signupRequest) {
@@ -89,19 +90,16 @@ public class UserServiceImpl implements UserService {
         sendingAnEmailMessageForEmailVerification(user, signupRequest.getEmail());
     }
 
+
     private void sendingAnEmailMessageForEmailVerification(User user, String email) {
-            //it is necessary to add NULL checks
             String activationCode = UUID.randomUUID().toString();
             user.setActivationCode(activationCode);
             userRepository.save(user);
-            String encryptUsername = encryptTheUsername(user.getUsername());
 
-            String message = String
-                .format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", encryptUsername, activationCode);
+            String encryptUsername = encryptTheUsername(user.getUsername());
+            String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", encryptUsername, activationCode);
             mailSender.send(email, "Activation code", message);
     }
-
-
 
 
     @Override
@@ -129,22 +127,17 @@ public class UserServiceImpl implements UserService {
 
 
     private String encryptTheUsername(String username){
-
         StringBuilder stringBuilder = new StringBuilder();
         username.chars().mapToObj(c -> (char) ++c).forEach(c -> stringBuilder.append(c));
-
         return stringBuilder.toString();
     }
 
 
     private String decryptTheUsername(String username){
-
         StringBuilder stringBuilder = new StringBuilder();
         username.chars().mapToObj(c -> (char) --c).forEach(c -> stringBuilder.append(c));
-
         return stringBuilder.toString();
     }
-
 
 
     public ResponseEntity<?> deleteUserById(int id){
@@ -155,5 +148,4 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
         return ResponseEntity.ok().body(new MessageResponse("DELETED SUCCESSFULLY"));
     }
-
 }
