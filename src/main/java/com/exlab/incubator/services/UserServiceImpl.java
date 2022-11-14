@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),
-            userDetails.getUsername(), userDetails.getEmail(), userDetails.getPhoneNumber()));
+            userDetails.getUsername(), userDetails.getEmail()));
     }
 
     private Authentication getAuthentication(LoginRequest loginRequest) {
