@@ -40,17 +40,6 @@ public class AuthController {
 
     @GetMapping("/activate/{code}")
     public String activate(@PathVariable String code) {
-        System.out.println(code);
-
-        int charAt = code.indexOf(".");
-        System.out.println(charAt);
-        String firstPart = code.substring(0, charAt);
-        String secondPart = code.substring(charAt + 1);
-
-        System.out.println(firstPart);
-        System.out.println(secondPart);
-
-
-        return userService.activateUserByCode(firstPart, secondPart);
+        return userService.activateUserByCode(code);
     }
 }

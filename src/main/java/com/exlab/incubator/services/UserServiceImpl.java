@@ -97,7 +97,10 @@ public class UserServiceImpl implements UserService {
             user.setActivationCode(activationCode);
             User savedUser = userRepository.save(user);
 
-            String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%d.%s", savedUser.getId(), activationCode);
+            String reversedUsername = new StringBuilder(user.getUsername()).reverse().toString();
+
+            String message = String
+                .format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", reversedUsername, activationCode);
             mailSender.send(email, "Activation code", message);
             Thread.sleep(300000);
         } catch (InterruptedException e) {
@@ -108,12 +111,18 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public String activateUserByCode(String userId, String code) {
+    public String activateUserByCode(String idPlusCode) {
 
-        int id = Integer.parseInt(userId);
+        System.out.println(idPlusCode);
 
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
+        int charAt = idPlusCode.indexOf(".");
+        String username = new StringBuilder(idPlusCode.substring(0, charAt)).reverse().toString();
+        String code = idPlusCode.substring(charAt + 1);
+
+
+
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found.", username)));
 
         boolean areTheCodesEqual = user.getActivationCode().equals(code);
 
