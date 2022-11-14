@@ -24,7 +24,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCollection(@PathVariable int id){
+    public ResponseEntity<?> deleteUser(@PathVariable int id){
         return userService.deleteUserById(id);
     }
 }
