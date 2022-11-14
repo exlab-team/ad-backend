@@ -95,9 +95,9 @@ public class UserServiceImpl implements UserService {
             //it is necessary to add NULL checks
             String activationCode = UUID.randomUUID().toString();
             user.setActivationCode(activationCode);
-            userRepository.save(user);
+            User savedUser = userRepository.save(user);
 
-            String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", user.getUsername(), activationCode);
+            String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%d.%s", savedUser.getId(), activationCode);
             mailSender.send(email, "Activation code", message);
             Thread.sleep(300000);
         } catch (InterruptedException e) {
@@ -108,10 +108,12 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public String activateUserByCode(String username, String code) {
+    public String activateUserByCode(String userId, String code) {
 
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+        int id = Integer.parseInt(userId);
+
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
 
         boolean areTheCodesEqual = user.getActivationCode().equals(code);
 
