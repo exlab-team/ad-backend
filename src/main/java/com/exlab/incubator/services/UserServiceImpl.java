@@ -110,15 +110,16 @@ public class UserServiceImpl implements UserService {
 
     @Scheduled(fixedDelay = 60000)
     private void checkingUsersForTheEndOfTheVerificationTime(){
+
+        long currentTime = new Date().getTime();
         List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
             .collect(Collectors.toList());
 
-        long currentTime = new Date().getTime();
-        for (User user: users){
-            if ((currentTime  - user.getCreatedAt().getTime()) >= (3600000 * 24)){
-                userRepository.delete(user);
-            }
-        }
+        users.stream().forEach(user -> {
+                if ((currentTime  - user.getCreatedAt().getTime()) >= (3600000 * 24))
+                    System.out.println("Delete user: " + user.getUsername());
+                    userRepository.delete(user);
+            });
     }
 
 
