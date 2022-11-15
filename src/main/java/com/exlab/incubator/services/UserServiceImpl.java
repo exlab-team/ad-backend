@@ -10,11 +10,15 @@ import com.exlab.incubator.entities.User;
 import com.exlab.incubator.repositories.RoleRepository;
 import com.exlab.incubator.repositories.UserRepository;
 import com.exlab.incubator.services.interfaces.UserService;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@EnableScheduling
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
@@ -103,6 +108,19 @@ public class UserServiceImpl implements UserService {
             mailSender.send(email, "Activation code", message);
     }
 
+    @Scheduled(fixedDelay = 60000)
+    private void checkingUsersForTheEndOfTheVerificationTime(){
+        List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
+            .collect(Collectors.toList());
+
+        long currentTime = new Date().getTime();
+        for (User user: users){
+            if ((currentTime  - user.getCreatedAt().getTime()) >= (3600000 * 24)){
+                userRepository.delete(user);
+            }
+        }
+    }
+
 
     @Override
     public String activateUserByCode(String usernamePlusCode) {
@@ -113,13 +131,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(decryptUsername)
             .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found.", decryptUsername)));
 
+        if (user.getIsConfirmed())
+            return "Your account has been successfully activated";
+
         boolean areTheCodesEqual = user.getActivationCode().equals(code);
 
         if (areTheCodesEqual && !user.getIsConfirmed()) {
             user.setIsConfirmed(true);
             userRepository.save(user);
-            return "Your account has been successfully activated";
-        }else if (areTheCodesEqual && user.getIsConfirmed()){
             return "Your account has been successfully activated";
         } else {
             sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), user.getEmail());
