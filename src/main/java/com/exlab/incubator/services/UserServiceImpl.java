@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found.", decryptUsername)));
 
         if (user.getIsConfirmed())
-            return "Your account has been successfully activated";
+            return "Your account is active";
 
         boolean areTheCodesEqual = user.getActivationCode().equals(code);
 
