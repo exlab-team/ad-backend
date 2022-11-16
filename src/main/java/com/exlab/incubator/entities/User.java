@@ -13,7 +13,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -49,6 +48,9 @@ public class User{
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "time_of_sending_the_confirmation_link")
+    private Date timeOfSendingTheConfirmationLink;
+
     @Column(length = 50, name = "activation_code")
     private String activationCode;
 
@@ -73,31 +75,6 @@ public class User{
     )
     private List<SocialNetwork> socialNetworks;
 
-
-    public User(String username, String password, String email, String phoneNumber) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
-
-    public User(int id, String username, String password, String email, String phoneNumber) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
-
-    public User(String username, String password, String email, Date createdAt,
-        List<Role> roles) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.createdAt = createdAt;
-        this.roles = roles;
-    }
-
     public User(String username, String password, String email, boolean isConfirmed,
         Date createdAt, List<Role> roles) {
         this.username = username;
@@ -108,23 +85,20 @@ public class User{
         this.roles = roles;
     }
 
-    public User(String username, String password, String email, Boolean isConfirmed,
-        Date createdAt, String activationCode, List<Role> roles) {
+    public User(int id, String username, String email, String phoneNumber,
+        Boolean isConfirmed, Date createdAt, Date timeOfSendingTheConfirmationLink,
+        String activationCode, PersonalAccount personalAccount,
+        List<Role> roles, List<SocialNetwork> socialNetworks) {
+        this.id = id;
         this.username = username;
-        this.password = password;
-        this.email = email;
-        this.isConfirmed = isConfirmed;
-        this.createdAt = createdAt;
-        this.activationCode = activationCode;
-        this.roles = roles;
-    }
-
-    public User(String username, String password, String email, String phoneNumber,
-         List<Role> roles) {
-        this.username = username;
-        this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.isConfirmed = isConfirmed;
+        this.createdAt = createdAt;
+        this.timeOfSendingTheConfirmationLink = timeOfSendingTheConfirmationLink;
+        this.activationCode = activationCode;
+        this.personalAccount = personalAccount;
         this.roles = roles;
+        this.socialNetworks = socialNetworks;
     }
 }

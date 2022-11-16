@@ -28,9 +28,23 @@ public class ScheduledTasks {
             .collect(Collectors.toList());
 
         users.stream().forEach(user -> {
-            if ((currentTime  - user.getCreatedAt().getTime()) >= (3600000 * 24))
-                System.out.println("Delete user: " + user.getUsername());
-            userRepository.delete(user);
+            if ((currentTime  - user.getCreatedAt().getTime()) >= (3600000 * 24)) {
+                userRepository.delete(user);
+            }
+        });
+    }
+
+    @Scheduled(fixedDelay = 30000)
+    private void checkingForLinkObsolescence(){
+        long currentTime = new Date().getTime();
+        List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
+            .collect(Collectors.toList());
+
+        users.stream().forEach(user -> {
+            if ((currentTime  - user.getTimeOfSendingTheConfirmationLink().getTime()) >= 300000) {
+                user.setActivationCode("outdated");
+                userRepository.save(user);
+            }
         });
     }
 

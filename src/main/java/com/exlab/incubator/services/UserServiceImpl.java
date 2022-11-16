@@ -97,6 +97,7 @@ public class UserServiceImpl implements UserService {
     private User getUserWithTheNewActivationCode(User user){
         String activationCode = UUID.randomUUID().toString();
         user.setActivationCode(activationCode);
+        user.setTimeOfSendingTheConfirmationLink(new Date());
         return userRepository.save(user);
     }
 
