@@ -10,15 +10,11 @@ import com.exlab.incubator.entities.User;
 import com.exlab.incubator.repositories.RoleRepository;
 import com.exlab.incubator.repositories.UserRepository;
 import com.exlab.incubator.services.interfaces.UserService;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,7 +34,6 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     private MailSender mailSender;
 
-
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
         AuthenticationManager authenticationManager, JwtUtils jwtUtils, RoleRepository roleRepository,
@@ -50,7 +45,6 @@ public class UserServiceImpl implements UserService {
         this.roleRepository = roleRepository;
         this.mailSender = mailSender;
     }
-
 
     @Override
     public ResponseEntity<?> authUser(LoginRequest loginRequest) {
@@ -64,12 +58,10 @@ public class UserServiceImpl implements UserService {
             userDetails.getUsername(), userDetails.getEmail()));
     }
 
-
     private Authentication getAuthentication(LoginRequest loginRequest) {
         return authenticationManager
             .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     }
-
 
     @Override
     public ResponseEntity<?> registerUser(SignupRequest signupRequest) {
@@ -84,12 +76,9 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(new MessageResponse("Mail confirmation is expected"));
     }
 
-
     private void createAndSaveUser(SignupRequest signupRequest) {
-
         User user = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
-            signupRequest.getEmail(), false, new Date(),
-            List.of(roleRepository.findById(1).get()));
+            signupRequest.getEmail(), false, new Date(), List.of(roleRepository.findById(1).get()));
 
         sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), signupRequest.getEmail());
     }
@@ -101,15 +90,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-
     private void sendingAnEmailMessageForEmailVerification(User user, String email) {
             String encryptUsername = encryptTheUsername(user.getUsername());
             String message = String.format("Please, visit next link: http://localhost:8080/authenticate/activate/%s.%s", encryptUsername, user.getActivationCode());
             mailSender.send(email, "Activation code", message);
     }
-
-
-
 
     @Override
     public String activateUserByCode(String usernamePlusCode) {
@@ -120,11 +105,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(decryptUsername)
             .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found.", decryptUsername)));
 
-        if (user.getIsConfirmed())
-            return "Your account is active";
+        if (user.getIsConfirmed()) return "Your account is active";
 
-        boolean areTheCodesEqual = user.getActivationCode().equals(code);
+        return activatingAnAccountOrSendingANewLink(user, user.getActivationCode().equals(code));
+    }
 
+    private String activatingAnAccountOrSendingANewLink(User user, boolean areTheCodesEqual) {
         if (areTheCodesEqual && !user.getIsConfirmed()) {
             user.setIsConfirmed(true);
             userRepository.save(user);
@@ -141,9 +127,8 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), email);
-        return ResponseEntity.ok(new MessageResponse("The re-sending of the link to the email was successful"));
+        return ResponseEntity.ok(new MessageResponse("The resending of the link to the email was successful"));
     }
-
 
     private String encryptTheUsername(String username){
         StringBuilder stringBuilder = new StringBuilder();
@@ -151,20 +136,17 @@ public class UserServiceImpl implements UserService {
         return stringBuilder.toString();
     }
 
-
     private String decryptTheUsername(String username){
         StringBuilder stringBuilder = new StringBuilder();
         username.chars().mapToObj(c -> (char) --c).forEach(c -> stringBuilder.append(c));
         return stringBuilder.toString();
     }
 
-
     public ResponseEntity<?> deleteUserById(int id){
-        User user = userRepository
-            .findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
 
         userRepository.delete(user);
-        return ResponseEntity.ok().body(new MessageResponse("DELETED SUCCESSFULLY"));
+        return ResponseEntity.ok().body(new MessageResponse(String.format("User with id - %d - deleted successfully", id)));
     }
 }
