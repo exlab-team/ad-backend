@@ -35,7 +35,7 @@ public class ScheduledTasks {
     }
 
     @Scheduled(fixedDelay = 30000)
-    private void checkingForLinkObsolescence(){
+    private void checkingForLinkOutdated(){
         long currentTime = new Date().getTime();
         List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
             .collect(Collectors.toList());
