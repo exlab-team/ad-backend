@@ -135,6 +135,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> resendingTheLinkToTheEmail(String email) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), email);
+        return ResponseEntity.ok(new MessageResponse("The re-sending of the link to the email was successful"));
+    }
+
 
     private String encryptTheUsername(String username){
         StringBuilder stringBuilder = new StringBuilder();

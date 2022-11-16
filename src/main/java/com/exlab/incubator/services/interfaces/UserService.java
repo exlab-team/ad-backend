@@ -12,4 +12,6 @@ public interface UserService {
     ResponseEntity<?> deleteUserById(int id);
 
     String activateUserByCode(String code);
+
+    ResponseEntity<?> resendingTheLinkToTheEmail(String email);
 }

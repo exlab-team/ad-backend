@@ -38,6 +38,11 @@ public class AuthController {
         return userService.registerUser(signupRequest);
     }
 
+    @PostMapping("/resending-link/{email}")
+    public ResponseEntity<?> resendingTheLink(@PathVariable String email) {
+        return userService.resendingTheLinkToTheEmail(email);
+    }
+
     @GetMapping("/activate/{code}")
     public String activate(@PathVariable String code) {
         return userService.activateUserByCode(code);
