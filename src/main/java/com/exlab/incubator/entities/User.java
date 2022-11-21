@@ -66,14 +66,21 @@ public class User{
     )
     private List<Role> roles;
 
-
     @ManyToMany
     @JoinTable(
-        name = "users_social_networks",
+        name = "users_unconnected_social_networks",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "social_network_id")
     )
-    private List<SocialNetwork> socialNetworks;
+    private List<SocialNetwork> unconnectedSocialNetworks;
+
+    @ManyToMany
+    @JoinTable(
+        name = "users_connected_social_networks",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "social_network_id")
+    )
+    private List<SocialNetwork> connectedSocialNetworks;
 
     public User(String username, String password, String email, boolean isConfirmed,
         Date createdAt, List<Role> roles) {
@@ -88,7 +95,7 @@ public class User{
     public User(int id, String username, String email, String phoneNumber,
         Boolean isConfirmed, Date createdAt, Date timeOfSendingTheConfirmationLink,
         String activationCode, PersonalAccount personalAccount,
-        List<Role> roles, List<SocialNetwork> socialNetworks) {
+        List<Role> roles, List<SocialNetwork> unconnectedSocialNetworks) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -99,6 +106,6 @@ public class User{
         this.activationCode = activationCode;
         this.personalAccount = personalAccount;
         this.roles = roles;
-        this.socialNetworks = socialNetworks;
+        this.unconnectedSocialNetworks = unconnectedSocialNetworks;
     }
 }
