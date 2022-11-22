@@ -58,6 +58,9 @@ public class User{
     @JoinColumn(name = "personal_account_id", referencedColumnName = "id")
     private PersonalAccount personalAccount;
 
+    @Column(length = 30, name = "tariff")
+    private String tariff;
+
     @ManyToMany
     @JoinTable(
         name = "users_roles",
