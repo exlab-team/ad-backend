@@ -1,0 +1,35 @@
+server:
+  port: ${PORT}
+
+app:
+  jwtSecret: ExLabADStartUpJWTSecret
+  jwtExpirationMs: 86400000
+
+
+spring:
+
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/incubator
+    username: ${DB_USERNAME}
+    password: ${DB_PASS}
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: ad_incubator@mail.ru
+    password: ${EMAIL_PASS}
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          auth: true
