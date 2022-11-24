@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-import com.exlab.incubator.entities.Role;
-import com.exlab.incubator.repositories.RoleRepository;
+import com.exlab.incubator.entity.Role;
+import com.exlab.incubator.repository.RoleRepository;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

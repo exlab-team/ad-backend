@@ -1,4 +1,4 @@
-package com.exlab.incubator.entities;
+package com.exlab.incubator.entity;
 
 import java.util.Date;
 import java.util.List;

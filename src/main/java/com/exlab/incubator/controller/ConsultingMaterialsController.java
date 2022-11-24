@@ -1,4 +1,4 @@
-package com.exlab.incubator.controllers;
+package com.exlab.incubator.controller;
 
 import com.exlab.incubator.dto.responses.MessageResponse;
 import org.springframework.http.ResponseEntity;

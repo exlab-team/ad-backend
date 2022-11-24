@@ -1,6 +1,6 @@
-package com.exlab.incubator.repositories;
+package com.exlab.incubator.repository;
 
-import com.exlab.incubator.entities.User;
+import com.exlab.incubator.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

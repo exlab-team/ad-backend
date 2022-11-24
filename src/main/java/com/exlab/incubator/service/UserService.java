@@ -1,4 +1,4 @@
-package com.exlab.incubator.services;
+package com.exlab.incubator.service;
 
 import com.exlab.incubator.dto.requests.LoginRequest;
 import com.exlab.incubator.dto.requests.SignupRequest;

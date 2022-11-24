@@ -1,4 +1,4 @@
-package com.exlab.incubator.entities;
+package com.exlab.incubator.entity;
 
 public enum Tariff {
     SIMPLE,

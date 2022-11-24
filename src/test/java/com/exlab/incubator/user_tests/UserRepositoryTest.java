@@ -3,11 +3,7 @@ package com.exlab.incubator.user_tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.exlab.incubator.entities.Role;
-import com.exlab.incubator.entities.User;
-import com.exlab.incubator.repositories.RoleRepository;
-import com.exlab.incubator.repositories.UserRepository;
-import java.util.List;
+import com.exlab.incubator.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

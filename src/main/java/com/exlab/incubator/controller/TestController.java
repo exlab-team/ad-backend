@@ -1,4 +1,4 @@
-package com.exlab.incubator.controllers;
+package com.exlab.incubator.controller;
 
 
 import org.springframework.security.access.prepost.PreAuthorize;

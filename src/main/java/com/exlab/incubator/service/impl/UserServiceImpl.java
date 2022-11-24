@@ -1,4 +1,4 @@
-package com.exlab.incubator.services.impl;
+package com.exlab.incubator.service.impl;
 
 import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.configuration.user_details.UserDetailsImpl;
@@ -6,11 +6,11 @@ import com.exlab.incubator.dto.requests.LoginRequest;
 import com.exlab.incubator.dto.requests.SignupRequest;
 import com.exlab.incubator.dto.responses.JwtResponse;
 import com.exlab.incubator.dto.responses.MessageResponse;
-import com.exlab.incubator.entities.User;
-import com.exlab.incubator.repositories.RoleRepository;
-import com.exlab.incubator.repositories.UserRepository;
-import com.exlab.incubator.services.MailSender;
-import com.exlab.incubator.services.UserService;
+import com.exlab.incubator.entity.User;
+import com.exlab.incubator.repository.RoleRepository;
+import com.exlab.incubator.repository.UserRepository;
+import com.exlab.incubator.service.MailSender;
+import com.exlab.incubator.service.UserService;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;

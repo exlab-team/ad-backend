@@ -1,7 +1,7 @@
-package com.exlab.incubator.controllers;
+package com.exlab.incubator.controller;
 
 import com.exlab.incubator.dto.requests.TariffRequest;
-import com.exlab.incubator.services.TariffPlanService;
+import com.exlab.incubator.service.TariffPlanService;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

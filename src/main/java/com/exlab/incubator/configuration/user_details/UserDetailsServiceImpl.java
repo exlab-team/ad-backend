@@ -1,7 +1,7 @@
 package com.exlab.incubator.configuration.user_details;
 
-import com.exlab.incubator.entities.User;
-import com.exlab.incubator.repositories.UserRepository;
+import com.exlab.incubator.entity.User;
+import com.exlab.incubator.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

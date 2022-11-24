@@ -1,11 +1,11 @@
-package com.exlab.incubator.services.impl;
+package com.exlab.incubator.service.impl;
 
 import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.dto.requests.TariffRequest;
-import com.exlab.incubator.entities.Tariff;
-import com.exlab.incubator.entities.User;
-import com.exlab.incubator.repositories.UserRepository;
-import com.exlab.incubator.services.TariffPlanService;
+import com.exlab.incubator.entity.Tariff;
+import com.exlab.incubator.entity.User;
+import com.exlab.incubator.repository.UserRepository;
+import com.exlab.incubator.service.TariffPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

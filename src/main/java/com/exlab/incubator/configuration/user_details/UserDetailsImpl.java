@@ -1,6 +1,6 @@
 package com.exlab.incubator.configuration.user_details;
 
-import com.exlab.incubator.entities.User;
+import com.exlab.incubator.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;
 import java.util.List;

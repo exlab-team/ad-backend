@@ -1,6 +1,6 @@
-package com.exlab.incubator.repositories;
+package com.exlab.incubator.repository;
 
-import com.exlab.incubator.entities.Role;
+import com.exlab.incubator.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

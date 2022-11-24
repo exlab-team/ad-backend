@@ -1,4 +1,4 @@
-package com.exlab.incubator.services;
+package com.exlab.incubator.service;
 
 public interface MailSender {
 

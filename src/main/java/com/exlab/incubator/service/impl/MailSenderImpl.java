@@ -1,7 +1,7 @@
-package com.exlab.incubator.services.impl;
+package com.exlab.incubator.service.impl;
 
 
-import com.exlab.incubator.services.MailSender;
+import com.exlab.incubator.service.MailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
