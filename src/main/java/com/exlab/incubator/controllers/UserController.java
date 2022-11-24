@@ -1,6 +1,6 @@
 package com.exlab.incubator.controllers;
 
-import com.exlab.incubator.services.interfaces.UserService;
+import com.exlab.incubator.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

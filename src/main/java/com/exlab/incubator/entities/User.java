@@ -95,20 +95,4 @@ public class User{
         this.roles = roles;
     }
 
-    public User(int id, String username, String email, String phoneNumber,
-        Boolean isConfirmed, Date createdAt, Date timeOfSendingTheConfirmationLink,
-        String activationCode, PersonalAccount personalAccount,
-        List<Role> roles, List<SocialNetwork> unconnectedSocialNetworks) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.isConfirmed = isConfirmed;
-        this.createdAt = createdAt;
-        this.timeOfSendingTheConfirmationLink = timeOfSendingTheConfirmationLink;
-        this.activationCode = activationCode;
-        this.personalAccount = personalAccount;
-        this.roles = roles;
-        this.unconnectedSocialNetworks = unconnectedSocialNetworks;
-    }
 }

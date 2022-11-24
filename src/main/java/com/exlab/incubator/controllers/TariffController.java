@@ -1,11 +1,9 @@
 package com.exlab.incubator.controllers;
 
-import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.dto.requests.TariffRequest;
-import com.exlab.incubator.services.interfaces.TariffPlanService;
+import com.exlab.incubator.services.TariffPlanService;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;

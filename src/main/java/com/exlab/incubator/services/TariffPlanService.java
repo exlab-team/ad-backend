@@ -1,4 +1,4 @@
-package com.exlab.incubator.services.interfaces;
+package com.exlab.incubator.services;
 
 import com.exlab.incubator.dto.requests.TariffRequest;
 import org.springframework.http.ResponseEntity;

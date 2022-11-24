@@ -1,4 +1,4 @@
-package com.exlab.incubator.services;
+package com.exlab.incubator.services.impl;
 
 import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.configuration.user_details.UserDetailsImpl;
@@ -9,12 +9,16 @@ import com.exlab.incubator.dto.responses.MessageResponse;
 import com.exlab.incubator.entities.User;
 import com.exlab.incubator.repositories.RoleRepository;
 import com.exlab.incubator.repositories.UserRepository;
-import com.exlab.incubator.services.interfaces.UserService;
+import com.exlab.incubator.services.MailSender;
+import com.exlab.incubator.services.UserService;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@EnableScheduling
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
@@ -148,5 +153,32 @@ public class UserServiceImpl implements UserService {
 
         userRepository.delete(user);
         return ResponseEntity.ok().body(new MessageResponse(String.format("User with id - %d - deleted successfully", id)));
+    }
+
+    @Scheduled(fixedDelay = 30000)
+    private void checkingUsersForTheEndOfTheVerificationTime(){
+        long currentTime = new Date().getTime();
+        List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
+            .collect(Collectors.toList());
+
+        users.stream().forEach(user -> {
+            if ((currentTime  - user.getCreatedAt().getTime()) >= (3600000 * 24)) {
+                userRepository.delete(user);
+            }
+        });
+    }
+
+    @Scheduled(fixedDelay = 30000)
+    private void checkingForLinkOutdated(){
+        long currentTime = new Date().getTime();
+        List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
+            .collect(Collectors.toList());
+
+        users.stream().forEach(user -> {
+            if ((currentTime  - user.getTimeOfSendingTheConfirmationLink().getTime()) >= 300000) {
+                user.setActivationCode("outdated");
+                userRepository.save(user);
+            }
+        });
     }
 }

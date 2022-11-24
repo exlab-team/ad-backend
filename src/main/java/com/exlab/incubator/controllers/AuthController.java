@@ -3,7 +3,7 @@ package com.exlab.incubator.controllers;
 
 import com.exlab.incubator.dto.requests.LoginRequest;
 import com.exlab.incubator.dto.requests.SignupRequest;
-import com.exlab.incubator.services.interfaces.UserService;
+import com.exlab.incubator.services.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

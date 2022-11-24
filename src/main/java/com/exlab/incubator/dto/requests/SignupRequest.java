@@ -7,11 +7,10 @@ import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.Value;
 
 
-@Getter
-@Setter
-@ToString
+@Value
 public class SignupRequest {
 
     @NotBlank
