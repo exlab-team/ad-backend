@@ -62,6 +62,10 @@ public class User{
     )
     private List<Role> roles;
 
+    @OneToOne
+    @JoinColumn(name = "private_office_id", referencedColumnName = "id")
+    private PrivateOffice privateOffice;
+
 
     public User(String username, String password, String email, boolean isConfirmed,
         Date createdAt, List<Role> roles) {

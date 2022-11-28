@@ -26,7 +26,6 @@ public class PrivateOffice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "private_office_id")
     private int id;
 
     @Column(length = 30, name = "tariff")
