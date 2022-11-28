@@ -54,13 +54,6 @@ public class User{
     @Column(length = 50, name = "activation_code")
     private String activationCode;
 
-    @OneToOne
-    @JoinColumn(name = "personal_account_id", referencedColumnName = "id")
-    private PersonalAccount personalAccount;
-
-    @Column(length = 30, name = "tariff")
-    private String tariff;
-
     @ManyToMany
     @JoinTable(
         name = "users_roles",
@@ -69,21 +62,6 @@ public class User{
     )
     private List<Role> roles;
 
-    @ManyToMany
-    @JoinTable(
-        name = "users_unconnected_social_networks",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "social_network_id")
-    )
-    private List<SocialNetwork> unconnectedSocialNetworks;
-
-    @ManyToMany
-    @JoinTable(
-        name = "users_connected_social_networks",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "social_network_id")
-    )
-    private List<SocialNetwork> connectedSocialNetworks;
 
     public User(String username, String password, String email, boolean isConfirmed,
         Date createdAt, List<Role> roles) {
@@ -94,5 +72,4 @@ public class User{
         this.createdAt = createdAt;
         this.roles = roles;
     }
-
 }
