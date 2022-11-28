@@ -43,4 +43,12 @@ public class PrivateOffice {
     )
     private List<SocialNetwork> socialNetworks;
 
+    @ManyToMany
+    @JoinTable(
+        name = "private_offices_advisory_materials",
+        joinColumns = @JoinColumn(name = "private_office_id"),
+        inverseJoinColumns = @JoinColumn(name = "advisory_material_id")
+    )
+    private List<AdvisoryMaterial> advisoryMaterials;
+
 }
