@@ -28,12 +28,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable int id){
-        return userService.deleteUserById(id);
-    }
-
     @PostMapping("/user")
     public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
         return userService.authUser(userLoginDto);
@@ -52,5 +46,11 @@ public class UserController {
     @GetMapping("/user/{code}")
     public String activateUserByTheActivationCodeFromTheLink(@PathVariable String code) {
         return userService.activateUserByCode(code);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable int id){
+        return userService.deleteUserById(id);
     }
 }
