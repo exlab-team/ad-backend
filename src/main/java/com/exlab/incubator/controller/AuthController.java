@@ -1,8 +1,8 @@
 package com.exlab.incubator.controller;
 
 
-import com.exlab.incubator.dto.requests.LoginRequest;
-import com.exlab.incubator.dto.requests.SignupRequest;
+import com.exlab.incubator.dto.requests.UserLoginDto;
+import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +29,13 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authUser(@Valid @RequestBody LoginRequest loginRequest) {
-        return userService.authUser(loginRequest);
+    public ResponseEntity<?> authUser(@Valid @RequestBody UserLoginDto userLoginDto) {
+        return userService.authUser(userLoginDto);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
-        return userService.registerUser(signupRequest);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
+        return userService.registerUser(userCreateDto);
     }
 
     @PostMapping("/resending-link/{email}")

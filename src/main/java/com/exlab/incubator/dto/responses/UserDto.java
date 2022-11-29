@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class JwtResponse {
+public class UserDto {
 
     private String token;
     private String type = "Bearer";
@@ -14,7 +14,7 @@ public class JwtResponse {
     private String email;
 
 
-    public JwtResponse(String token, int id, String username, String email) {
+    public UserDto(String token, int id, String username, String email) {
         this.token = token;
         this.id = id;
         this.username = username;

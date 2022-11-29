@@ -1,17 +1,16 @@
 package com.exlab.incubator.dto.requests;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.Value;
 
-
-@Value
-public class SignupRequest {
+@Getter
+@Setter
+@ToString
+public class UserLoginDto {
 
     @NotBlank
     @Size(min = 5, max = 30, message = "Username min size is 5 symbols and max size is 30 symbols")
@@ -22,9 +21,4 @@ public class SignupRequest {
     @Size(min = 16, max = 16, message = "Password size is 16 symbols")
     @Pattern(regexp = "[0-9a-zA-Zа-яА-Я]{16}", message = "Password can contains only letters and numbers")
     private String password;
-
-    @NotBlank
-    @Size(max = 256, message = "Email max size is 256 symbols")
-    @Email
-    private String email;
 }

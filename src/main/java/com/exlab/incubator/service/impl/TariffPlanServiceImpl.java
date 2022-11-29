@@ -1,7 +1,7 @@
 package com.exlab.incubator.service.impl;
 
 import com.exlab.incubator.configuration.jwt.JwtUtils;
-import com.exlab.incubator.dto.requests.TariffRequest;
+import com.exlab.incubator.dto.requests.TariffDto;
 import com.exlab.incubator.service.TariffPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class TariffPlanServiceImpl implements TariffPlanService {
     }
 
     @Override
-    public ResponseEntity<?> setTariffPlanToTheUser(TariffRequest tariffRequest, String jwt) {
+    public ResponseEntity<?> setTariffPlanToTheUser(TariffDto tariffDto, String jwt) {
       return ResponseEntity.ok("Default response");
     }
 }

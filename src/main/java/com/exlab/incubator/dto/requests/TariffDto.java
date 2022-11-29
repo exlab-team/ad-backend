@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class TariffRequest {
+public class TariffDto {
 
     private String tariff;
 

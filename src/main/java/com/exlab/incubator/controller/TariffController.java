@@ -1,6 +1,6 @@
 package com.exlab.incubator.controller;
 
-import com.exlab.incubator.dto.requests.TariffRequest;
+import com.exlab.incubator.dto.requests.TariffDto;
 import com.exlab.incubator.service.TariffPlanService;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,9 @@ public class TariffController {
     }
 
     @PostMapping("/setting")
-    public ResponseEntity<?> setTariff(@RequestBody TariffRequest tariffRequest, HttpServletRequest request){
-        return tariffPlanService.setTariffPlanToTheUser(tariffRequest, request.getHeader("Authorization").substring(7));
+    public ResponseEntity<?> setTariff(@RequestBody TariffDto tariffDto, HttpServletRequest request){
+        return tariffPlanService.setTariffPlanToTheUser(
+            tariffDto, request.getHeader("Authorization").substring(7));
     }
 
 }

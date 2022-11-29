@@ -1,10 +1,10 @@
 package com.exlab.incubator.service;
 
-import com.exlab.incubator.dto.requests.TariffRequest;
+import com.exlab.incubator.dto.requests.TariffDto;
 import org.springframework.http.ResponseEntity;
 
 public interface TariffPlanService {
 
-    ResponseEntity<?> setTariffPlanToTheUser(TariffRequest tariffRequest, String jwt);
+    ResponseEntity<?> setTariffPlanToTheUser(TariffDto tariffDto, String jwt);
 
 }

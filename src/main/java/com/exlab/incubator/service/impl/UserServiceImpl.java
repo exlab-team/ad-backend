@@ -2,10 +2,10 @@ package com.exlab.incubator.service.impl;
 
 import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.configuration.user_details.UserDetailsImpl;
-import com.exlab.incubator.dto.requests.LoginRequest;
-import com.exlab.incubator.dto.requests.SignupRequest;
-import com.exlab.incubator.dto.responses.JwtResponse;
-import com.exlab.incubator.dto.responses.MessageResponse;
+import com.exlab.incubator.dto.requests.UserLoginDto;
+import com.exlab.incubator.dto.requests.UserCreateDto;
+import com.exlab.incubator.dto.responses.UserDto;
+import com.exlab.incubator.dto.responses.MessageDto;
 import com.exlab.incubator.entity.User;
 import com.exlab.incubator.repository.RoleRepository;
 import com.exlab.incubator.repository.UserRepository;
@@ -52,40 +52,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> authUser(LoginRequest loginRequest) {
+    public ResponseEntity<?> authUser(UserLoginDto userLoginDto) {
 
-        Authentication authentication = getAuthentication(loginRequest);
+        Authentication authentication = getAuthentication(userLoginDto);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),
+        return ResponseEntity.ok(new UserDto(jwt, userDetails.getId(),
             userDetails.getUsername(), userDetails.getEmail()));
     }
 
-    private Authentication getAuthentication(LoginRequest loginRequest) {
+    private Authentication getAuthentication(UserLoginDto userLoginDto) {
         return authenticationManager
-            .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword()));
     }
 
     @Override
-    public ResponseEntity<?> registerUser(SignupRequest signupRequest) {
-        if (userRepository.existsByUsername(signupRequest.getUsername()))
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is exist"));
+    public ResponseEntity<?> registerUser(UserCreateDto userCreateDto) {
+        if (userRepository.existsByUsername(userCreateDto.getUsername()))
+            return ResponseEntity.badRequest().body(new MessageDto("Error: Username is exist"));
 
-        if (userRepository.existsByEmail(signupRequest.getEmail()))
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is exist"));
+        if (userRepository.existsByEmail(userCreateDto.getEmail()))
+            return ResponseEntity.badRequest().body(new MessageDto("Error: Email is exist"));
 
-        createAndSaveUser(signupRequest);
+        createAndSaveUser(userCreateDto);
 
-        return ResponseEntity.ok(new MessageResponse("Mail confirmation is expected"));
+        return ResponseEntity.ok(new MessageDto("Mail confirmation is expected"));
     }
 
-    private void createAndSaveUser(SignupRequest signupRequest) {
-        User user = new User(signupRequest.getUsername(), passwordEncoder.encode(signupRequest.getPassword()),
-            signupRequest.getEmail(), false, new Date(), List.of(roleRepository.findById(1).get()));
+    private void createAndSaveUser(UserCreateDto userCreateDto) {
+        User user = new User(userCreateDto.getUsername(), passwordEncoder.encode(userCreateDto.getPassword()),
+            userCreateDto.getEmail(), false, new Date(), List.of(roleRepository.findById(1).get()));
 
-        sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), signupRequest.getEmail());
+        sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), userCreateDto.getEmail());
     }
 
     private User getUserWithTheNewActivationCode(User user){
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), email);
-        return ResponseEntity.ok(new MessageResponse("The resending of the link to the email was successful"));
+        return ResponseEntity.ok(new MessageDto("The resending of the link to the email was successful"));
     }
 
     private String encryptTheUsername(String username){
@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
 
         userRepository.delete(user);
-        return ResponseEntity.ok().body(new MessageResponse(String.format("User with id - %d - deleted successfully", id)));
+        return ResponseEntity.ok().body(new MessageDto(String.format("User with id - %d - deleted successfully", id)));
     }
 
     @Scheduled(fixedDelay = 30000)
