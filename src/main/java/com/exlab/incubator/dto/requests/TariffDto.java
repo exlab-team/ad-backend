@@ -1,14 +1,9 @@
 package com.exlab.incubator.dto.requests;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Value;
 
-@Getter
-@Setter
-@ToString
+@Value
 public class TariffDto {
 
     private String tariff;
-
 }
