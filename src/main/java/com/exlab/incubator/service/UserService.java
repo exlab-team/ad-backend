@@ -2,16 +2,18 @@ package com.exlab.incubator.service;
 
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.requests.UserCreateDto;
+import com.exlab.incubator.dto.responses.MessageDto;
+import com.exlab.incubator.dto.responses.UserDto;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    ResponseEntity<?> authUser(UserLoginDto userLoginDto);
+    ResponseEntity<UserDto> loginUser(UserLoginDto userLoginDto);
 
-    ResponseEntity<?> registerUser(UserCreateDto userCreateDto);
+    ResponseEntity<MessageDto> createUser(UserCreateDto userCreateDto);
 
-    ResponseEntity<?> deleteUserById(int id);
+    String deleteUserById(int id);
 
     String activateUserByCode(String code);
 
-    ResponseEntity<?> resendingTheLinkToTheEmail(String email);
+    ResponseEntity<MessageDto> resendingTheVerificationLink(String email);
 }

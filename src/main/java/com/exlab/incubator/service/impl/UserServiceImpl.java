@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> authUser(UserLoginDto userLoginDto) {
+    public ResponseEntity<UserDto> loginUser(UserLoginDto userLoginDto) {
 
         Authentication authentication = getAuthentication(userLoginDto);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> registerUser(UserCreateDto userCreateDto) {
+    public ResponseEntity<MessageDto> createUser(UserCreateDto userCreateDto) {
         if (userRepository.existsByUsername(userCreateDto.getUsername()))
             return ResponseEntity.badRequest().body(new MessageDto("Error: Username is exist"));
 
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> resendingTheLinkToTheEmail(String email) {
+    public ResponseEntity<MessageDto> resendingTheVerificationLink(String email) {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -153,12 +153,12 @@ public class UserServiceImpl implements UserService {
         return stringBuilder.toString();
     }
 
-    public ResponseEntity<?> deleteUserById(int id){
+    public String deleteUserById(int id){
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
 
         userRepository.delete(user);
-        return ResponseEntity.ok().body(new MessageDto(String.format("User with id - %d - deleted successfully", id)));
+        return String.format("User with id - %d - deleted successfully", id);
     }
 
     @Scheduled(fixedDelay = 30000)

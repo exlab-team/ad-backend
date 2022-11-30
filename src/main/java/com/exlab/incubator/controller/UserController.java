@@ -2,6 +2,8 @@ package com.exlab.incubator.controller;
 
 import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.requests.UserLoginDto;
+import com.exlab.incubator.dto.responses.MessageDto;
+import com.exlab.incubator.dto.responses.UserDto;
 import com.exlab.incubator.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,18 +31,18 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
-        return userService.authUser(userLoginDto);
+    public ResponseEntity<UserDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
+        return userService.loginUser(userLoginDto);
     }
 
     @PostMapping()
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        return userService.registerUser(userCreateDto);
+    public ResponseEntity<MessageDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
+        return userService.createUser(userCreateDto);
     }
 
     @PostMapping("/user/{email}")
-    public ResponseEntity<?> resendingTheVerificationLink(@PathVariable String email) {
-        return userService.resendingTheLinkToTheEmail(email);
+    public ResponseEntity<MessageDto> resendingTheVerificationLink(@PathVariable String email) {
+        return userService.resendingTheVerificationLink(email);
     }
 
     @GetMapping("/user/{code}")
@@ -50,7 +52,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable int id){
+    public String deleteUser(@PathVariable int id){
         return userService.deleteUserById(id);
     }
 }
