@@ -25,8 +25,4 @@ public class PersonalAccount {
 
     @Column(nullable = false, length = 100)
     private String accountNumber;
-
-    public PersonalAccount(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
 }

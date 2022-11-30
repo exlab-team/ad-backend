@@ -50,5 +50,4 @@ public class PrivateOffice {
         inverseJoinColumns = @JoinColumn(name = "advisory_material_id")
     )
     private List<AdvisoryMaterial> advisoryMaterials;
-
 }

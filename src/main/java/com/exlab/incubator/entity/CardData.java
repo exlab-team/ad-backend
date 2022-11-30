@@ -37,11 +37,4 @@ public class CardData {
 
     @Column(name = "total_balance")
     private Double totalBalance;
-
-    public CardData(String cardNumber, String cardOwner, String expirationDate, int CVVCode) {
-        this.cardNumber = cardNumber;
-        this.cardOwner = cardOwner;
-        this.expirationDate = expirationDate;
-        this.CVVCode = CVVCode;
-    }
 }

@@ -19,7 +19,6 @@ import lombok.Setter;
 @Setter
 public class SocialNetwork {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -29,13 +28,4 @@ public class SocialNetwork {
 
     @Column(length = 150)
     private String link;
-
-    public SocialNetwork(String name) {
-        this.name = name;
-    }
-
-    public SocialNetwork(String name, String link) {
-        this.name = name;
-        this.link = link;
-    }
 }

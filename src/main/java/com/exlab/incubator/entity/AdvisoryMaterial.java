@@ -29,5 +29,4 @@ public class AdvisoryMaterial {
 
     @Column(nullable = false)
     private String content;
-
 }
