@@ -13,6 +13,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +25,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User{
 
     @Id
@@ -65,15 +67,4 @@ public class User{
     @OneToOne
     @JoinColumn(name = "private_office_id", referencedColumnName = "id")
     private PrivateOffice privateOffice;
-
-
-    public User(String username, String password, String email, boolean isConfirmed,
-        Date createdAt, List<Role> roles) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.isConfirmed = isConfirmed;
-        this.createdAt = createdAt;
-        this.roles = roles;
-    }
 }

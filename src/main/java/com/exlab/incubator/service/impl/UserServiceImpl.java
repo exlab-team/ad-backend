@@ -82,8 +82,14 @@ public class UserServiceImpl implements UserService {
     }
 
     private void createAndSaveUser(UserCreateDto userCreateDto) {
-        User user = new User(userCreateDto.getUsername(), passwordEncoder.encode(userCreateDto.getPassword()),
-            userCreateDto.getEmail(), false, new Date(), List.of(roleRepository.findById(1).get()));
+        User user = User.builder()
+            .username(userCreateDto.getUsername())
+            .password(passwordEncoder.encode(userCreateDto.getPassword()))
+            .email(userCreateDto.getEmail())
+            .isConfirmed(false)
+            .createdAt(new Date())
+            .roles(List.of(roleRepository.findById(1).get()))
+            .build();
 
         sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), userCreateDto.getEmail());
     }
