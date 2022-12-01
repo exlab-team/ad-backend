@@ -1,5 +1,6 @@
 package com.exlab.incubator.dto.requests;
 
+import com.exlab.incubator.validation.FieldEquals;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -7,6 +8,7 @@ import javax.validation.constraints.Size;
 import lombok.Value;
 
 @Value
+@FieldEquals( field="password", equalsTo="confirmPassword" )
 public class UserCreateDto {
 
     @NotBlank
@@ -18,6 +20,12 @@ public class UserCreateDto {
     @Size(min = 16, max = 16, message = "Password size is 16 symbols")
     @Pattern(regexp = "[0-9a-zA-Zа-яА-Я]{16}", message = "Password can contains only letters and numbers")
     private String password;
+
+    @NotBlank
+    @Size(min = 16, max = 16, message = "Password size is 16 symbols")
+    @Pattern(regexp = "[0-9a-zA-Zа-яА-Я]{16}", message = "Password can contains only letters and numbers")
+    private String confirmPassword;
+
 
     @NotBlank
     @Size(max = 256, message = "Email max size is 256 symbols")
