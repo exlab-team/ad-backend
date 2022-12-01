@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext;
 public class PasswordEqualityValidator implements ConstraintValidator<PasswordEquality, Object> {
     private String field;
     private String equalsTo;
-    private String message = PasswordEquality.MESSAGE;
+    private String message = "fields.notMatches";
 
     public void initialize(PasswordEquality constraintAnnotation) {
         this.message = constraintAnnotation.message();
@@ -33,7 +33,7 @@ public class PasswordEqualityValidator implements ConstraintValidator<PasswordEq
                 String msg = this.message;
                 if( this.message == null
                     || "".equals( this.message )
-                    || PasswordEquality.MESSAGE.equals( this.message ) ){
+                    || "fields.notMatches".equals( this.message ) ){
                     msg = field + " is not equal to " + equalsTo;
                 }
                 context.disableDefaultConstraintViolation();

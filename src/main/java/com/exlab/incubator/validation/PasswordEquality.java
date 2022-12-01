@@ -18,7 +18,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = PasswordEqualityValidator.class)
 @Documented
 public @interface PasswordEquality {
-    public static final String MESSAGE = "fields.notMatches";
 
     String message() default "fields.notMatches";
 
