@@ -4,8 +4,9 @@ import com.exlab.incubator.validation.PasswordEquality;
 import java.lang.reflect.Method;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 public class PasswordEqualityValidator implements ConstraintValidator<PasswordEquality, Object> {
     private String field;
     private String equalsTo;
@@ -19,12 +20,10 @@ public class PasswordEqualityValidator implements ConstraintValidator<PasswordEq
 
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         try {
-            final Object password = getProperty(value, field, null);
-            final Object confirmPassword = getProperty(value, equalsTo, null);
+            Object password = getProperty(value, field, null);
+            Object confirmPassword = getProperty(value, equalsTo, null);
 
-            if (password == null && confirmPassword == null) {
-                return true;
-            }
+            if (password == null && confirmPassword == null) return true;
 
             boolean matches = (password != null) && password.equals(confirmPassword);
 
@@ -38,21 +37,21 @@ public class PasswordEqualityValidator implements ConstraintValidator<PasswordEq
             }
 
             return matches;
-        } catch (final Exception e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return false;
         }
-        return true;
+
     }
 
-    private Object getProperty(Object value, String fieldName,
-        Object defaultValue) {
+    private Object getProperty(Object value, String fieldName, Object defaultValue) {
         Class<?> clazz = value.getClass();
-        String methodName = "get" + Character.toUpperCase(fieldName.charAt(0))
-            + fieldName.substring(1);
+        String methodName = "get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         try {
             Method method = clazz.getDeclaredMethod(methodName, new Class[0]);
             return method.invoke(value);
         } catch (Exception e) {
+            log.error(e.getMessage());
         }
         return defaultValue;
     }
