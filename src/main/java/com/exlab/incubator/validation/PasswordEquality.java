@@ -1,6 +1,6 @@
 package com.exlab.incubator.validation;
 
-import com.exlab.incubator.validation.impl.FieldEqualsValidator;
+import com.exlab.incubator.validation.impl.PasswordEqualityValidator;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
@@ -15,9 +15,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target(TYPE)
 @Retention(RUNTIME)
-@Constraint(validatedBy = FieldEqualsValidator.class)
+@Constraint(validatedBy = PasswordEqualityValidator.class)
 @Documented
-public @interface FieldEquals {
+public @interface PasswordEquality {
     public static final String MESSAGE = "fields.notMatches";
 
     String message() default "fields.notMatches";
@@ -30,7 +30,7 @@ public @interface FieldEquals {
     @Retention(RUNTIME)
     @Documented
     @interface List {
-        FieldEquals[] value();
+        PasswordEquality[] value();
     }
 
     String field();

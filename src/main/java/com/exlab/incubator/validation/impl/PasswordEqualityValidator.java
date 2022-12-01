@@ -1,20 +1,17 @@
 package com.exlab.incubator.validation.impl;
 
-import com.exlab.incubator.validation.FieldEquals;
+import com.exlab.incubator.validation.PasswordEquality;
 import java.lang.reflect.Method;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 
-
-public class FieldEqualsValidator implements
-    ConstraintValidator<FieldEquals, Object> {
+public class PasswordEqualityValidator implements ConstraintValidator<PasswordEquality, Object> {
     private String field;
     private String equalsTo;
-    private String message = FieldEquals.MESSAGE;
+    private String message = PasswordEquality.MESSAGE;
 
-    public void initialize(FieldEquals constraintAnnotation) {
+    public void initialize(PasswordEquality constraintAnnotation) {
         this.message = constraintAnnotation.message();
         this.field = constraintAnnotation.field();
         this.equalsTo = constraintAnnotation.equalsTo();
@@ -36,7 +33,7 @@ public class FieldEqualsValidator implements
                 String msg = this.message;
                 if( this.message == null
                     || "".equals( this.message )
-                    || FieldEquals.MESSAGE.equals( this.message ) ){
+                    || PasswordEquality.MESSAGE.equals( this.message ) ){
                     msg = field + " is not equal to " + equalsTo;
                 }
                 context.disableDefaultConstraintViolation();

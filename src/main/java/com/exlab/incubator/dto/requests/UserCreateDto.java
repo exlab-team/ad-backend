@@ -1,6 +1,6 @@
 package com.exlab.incubator.dto.requests;
 
-import com.exlab.incubator.validation.FieldEquals;
+import com.exlab.incubator.validation.PasswordEquality;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import lombok.Value;
 
 @Value
-@FieldEquals( field="password", equalsTo="confirmPassword" )
+@PasswordEquality( field="password", equalsTo="confirmPassword" )
 public class UserCreateDto {
 
     @NotBlank
