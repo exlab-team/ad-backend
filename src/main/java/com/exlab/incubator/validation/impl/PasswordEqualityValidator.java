@@ -19,26 +19,22 @@ public class PasswordEqualityValidator implements ConstraintValidator<PasswordEq
 
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         try {
-            final Object fieldObject = getProperty(value, field, null);
-            final Object equalsToObject = getProperty(value, equalsTo, null);
+            final Object password = getProperty(value, field, null);
+            final Object confirmPassword = getProperty(value, equalsTo, null);
 
-            if (fieldObject == null && equalsToObject == null) {
+            if (password == null && confirmPassword == null) {
                 return true;
             }
 
-            boolean matches = (fieldObject != null)
-                && fieldObject.equals(equalsToObject);
+            boolean matches = (password != null) && password.equals(confirmPassword);
 
             if (!matches) {
-                String msg = this.message;
-                if( this.message == null
-                    || "".equals( this.message )
-                    || "fields.notMatches".equals( this.message ) ){
-                    msg = field + " is not equal to " + equalsTo;
+                String constraintMessage = this.message;
+                if(this.message == null || this.message.equals("") || this.message.equals("fields.notMatches")){
+                    constraintMessage = field + " is not equal to " + equalsTo;
                 }
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate( msg )
-                    .addNode(equalsTo).addConstraintViolation();
+                context.buildConstraintViolationWithTemplate(constraintMessage).addNode(equalsTo).addConstraintViolation();
             }
 
             return matches;
