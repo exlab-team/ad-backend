@@ -60,6 +60,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/test/public").permitAll()
             .antMatchers("/users/**").permitAll()
+            .antMatchers("/swagger-ui/**").permitAll()
             .anyRequest().authenticated()
             .and()
             .rememberMe().tokenValiditySeconds(1440);
