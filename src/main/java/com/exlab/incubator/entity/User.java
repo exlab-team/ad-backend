@@ -63,8 +63,4 @@ public class User{
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles;
-
-    @OneToOne
-    @JoinColumn(name = "private_office_id", referencedColumnName = "id")
-    private PrivateOffice privateOffice;
 }

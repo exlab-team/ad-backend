@@ -28,6 +28,10 @@ public class PrivateOffice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     @Column(length = 30, name = "tariff")
     private String tariff;
 
