@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,9 +39,6 @@ public class User{
 
     @Column(nullable = false, length = 70, unique = true)
     private String email;
-
-    @Column(length = 30, unique = true, name = "phone_number")
-    private String phoneNumber;
 
     @Column(name = "is_confirmed")
     private Boolean isConfirmed;

@@ -16,25 +16,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class UserDetailsImpl implements UserDetails {
 
     private static final long serialVersionUID = 1L;
-
     private int id;
     private String username;
     @JsonIgnore
     private String password;
     private String email;
-    private String phoneNumber;
 
     private Collection<? extends GrantedAuthority> authorities;
-
 
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles()
             .stream().map(role -> new SimpleGrantedAuthority(role.getName()))
             .collect(Collectors.toList());
         return new UserDetailsImpl(user.getId(), user.getUsername(),  user.getPassword(),
-            user.getEmail(), user.getPhoneNumber(), authorities);
+            user.getEmail(), authorities);
     }
-
 
     @Override
     public boolean isAccountNonExpired() {
