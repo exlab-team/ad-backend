@@ -30,22 +30,22 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user")
+    @GetMapping
     public ResponseEntity<UserDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
         return userService.loginUser(userLoginDto);
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<MessageDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
         return userService.createUser(userCreateDto);
     }
 
-    @PostMapping("/user/{email}")
+    @PostMapping("/{email}")
     public ResponseEntity<MessageDto> resendingTheVerificationLink(@PathVariable String email) {
         return userService.resendingTheVerificationLink(email);
     }
 
-    @GetMapping("/user/{code}")
+    @GetMapping("/{code}")
     public String activateUserByTheActivationCodeFromTheLink(@PathVariable String code) {
         return userService.activateUserByCode(code);
     }

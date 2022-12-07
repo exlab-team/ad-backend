@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
     private void sendingAnEmailMessageForEmailVerification(User user, String email) {
             String encryptUsername = encryptTheUsername(user.getUsername());
-            String message = String.format("Please, visit next link: http://localhost:8080/users/user/%s.%s", encryptUsername, user.getActivationCode());
+            String message = String.format("Please, visit next link: http://localhost:8080/users/%s.%s", encryptUsername, user.getActivationCode());
             mailSender.send(email, "Activation code", message);
     }
 
