@@ -52,15 +52,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<UserDto> loginUser(UserLoginDto userLoginDto) {
+    public UserDto loginUser(UserLoginDto userLoginDto) {
 
         Authentication authentication = getAuthentication(userLoginDto);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        return ResponseEntity.ok(new UserDto(jwt, userDetails.getId(),
-            userDetails.getUsername(), userDetails.getEmail()));
+        return new UserDto(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail());
     }
 
     private Authentication getAuthentication(UserLoginDto userLoginDto) {

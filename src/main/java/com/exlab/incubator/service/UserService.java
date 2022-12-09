@@ -7,7 +7,7 @@ import com.exlab.incubator.dto.responses.UserDto;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    ResponseEntity<UserDto> loginUser(UserLoginDto userLoginDto);
+    UserDto loginUser(UserLoginDto userLoginDto);
 
     ResponseEntity<MessageDto> createUser(UserCreateDto userCreateDto);
 
