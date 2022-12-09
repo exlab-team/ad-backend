@@ -48,13 +48,13 @@ public class UserController {
     }
 
     @GetMapping("/{code}")
-    public String activateUserByTheActivationCodeFromTheLink(@PathVariable String code) {
-        return userService.activateUserByCode(code);
+    public ResponseEntity<String> activateUserByTheActivationCodeFromTheLink(@PathVariable String code) {
+        return new ResponseEntity<>(userService.activateUserByCode(code), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable int id){
-        return userService.deleteUserById(id);
+    public ResponseEntity<String> deleteUser(@PathVariable int id){
+        return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.OK);
     }
 }
