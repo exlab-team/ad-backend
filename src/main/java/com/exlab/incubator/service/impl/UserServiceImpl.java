@@ -132,12 +132,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<MessageDto> resendingTheVerificationLink(String email) {
+    public MessageDto resendingTheVerificationLink(String email) {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), email);
-        return ResponseEntity.ok(new MessageDto("The resending of the link to the email was successful"));
+        return new MessageDto("The resending of the link to the email was successful");
     }
 
     private String encryptTheUsername(String username){

@@ -15,5 +15,5 @@ public interface UserService {
 
     String activateUserByCode(String code);
 
-    ResponseEntity<MessageDto> resendingTheVerificationLink(String email);
+    MessageDto resendingTheVerificationLink(String email);
 }

@@ -44,7 +44,7 @@ public class UserController {
 
     @PostMapping("/{email}")
     public ResponseEntity<MessageDto> resendingTheVerificationLink(@PathVariable String email) {
-        return userService.resendingTheVerificationLink(email);
+        return new ResponseEntity<>(userService.resendingTheVerificationLink(email), HttpStatus.OK);
     }
 
     @GetMapping("/{code}")
