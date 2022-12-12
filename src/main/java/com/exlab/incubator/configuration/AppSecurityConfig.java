@@ -63,7 +63,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/swagger-ui/**").permitAll()
             .anyRequest().authenticated()
             .and()
-            .rememberMe().tokenValiditySeconds(1440);
+            .rememberMe().tokenValiditySeconds(1440)
+            .and()
+            .logout();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
