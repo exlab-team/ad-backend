@@ -52,18 +52,20 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.cors().and().csrf().disable()
+        http
+            .cors().and().csrf().disable()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers("/test/public").permitAll()
-            .antMatchers("/users/**").permitAll()
-            .antMatchers("/swagger-ui/**").permitAll()
-            .anyRequest().authenticated()
+                .antMatchers("/test/public").permitAll()
+                .antMatchers("/users/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .anyRequest().authenticated()
             .and()
-            .rememberMe().tokenValiditySeconds(1440)
+            .rememberMe()
+                .tokenValiditySeconds(1440)
             .and()
             .logout();
 
