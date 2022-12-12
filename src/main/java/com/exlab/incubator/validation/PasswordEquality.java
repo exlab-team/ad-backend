@@ -19,20 +19,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface PasswordEquality {
 
-    String message() default "fields.notMatches";
+    String message() default "Fields values does not equals";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    @Target(TYPE)
-    @Retention(RUNTIME)
-    @Documented
-    @interface List {
-        PasswordEquality[] value();
-    }
-
     String field();
 
     String equalsTo();
+
+    @Target(TYPE)
+    @Retention(RUNTIME)
+    @interface List {
+        PasswordEquality[] value();
+    }
 }
