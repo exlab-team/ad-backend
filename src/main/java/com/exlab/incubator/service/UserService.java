@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 public interface UserService {
     UserDto loginUser(UserLoginDto userLoginDto);
 
-    ResponseEntity<MessageDto> createUser(UserCreateDto userCreateDto);
+    MessageDto createUser(UserCreateDto userCreateDto);
 
     String deleteUserById(int id);
 

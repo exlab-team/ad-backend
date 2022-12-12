@@ -11,6 +11,8 @@ import com.exlab.incubator.repository.RoleRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.UserService;
+import exception.EmailExistsException;
+import exception.UsernameExistsException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -68,16 +70,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<MessageDto> createUser(UserCreateDto userCreateDto) {
+    public MessageDto createUser(UserCreateDto userCreateDto) {
         if (userRepository.existsByUsername(userCreateDto.getUsername()))
-            return ResponseEntity.badRequest().body(new MessageDto("Error: Username is exist"));
+            throw new UsernameExistsException();
 
         if (userRepository.existsByEmail(userCreateDto.getEmail()))
-            return ResponseEntity.badRequest().body(new MessageDto("Error: Email is exist"));
+            throw new EmailExistsException();
 
         createAndSaveUser(userCreateDto);
 
-        return ResponseEntity.ok(new MessageDto("Mail confirmation is expected"));
+        return new MessageDto("Mail confirmation is expected");
     }
 
     private void createAndSaveUser(UserCreateDto userCreateDto) {
