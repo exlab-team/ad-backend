@@ -1,10 +1,8 @@
 package com.exlab.incubator.dto.responses;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
-@Getter
-@Setter
+@Value
 public class UserDto {
 
     private String token;
