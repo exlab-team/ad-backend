@@ -60,19 +60,4 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable int id){
         return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.OK);
     }
-
-    @ExceptionHandler(FieldExistsException.class)
-    public ResponseEntity<ExceptionDto> handleException1(FieldExistsException e) {
-        return new ResponseEntity<>(
-            new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()),
-            HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ExceptionDto> handleException2(UserNotFoundException e) {
-        return new ResponseEntity<>(
-            new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()),
-            HttpStatus.BAD_REQUEST);
-    }
-
 }
