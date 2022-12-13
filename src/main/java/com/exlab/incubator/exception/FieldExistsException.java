@@ -4,21 +4,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class EmailExistsException extends RuntimeException {
+public class FieldExistsException extends RuntimeException{
 
-    public EmailExistsException() {
+    public FieldExistsException() {
         super();
     }
 
-    public EmailExistsException(String message) {
+    public FieldExistsException(String message) {
         super(message);
     }
 
-    public EmailExistsException(String message, Throwable cause) {
+    public FieldExistsException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public EmailExistsException(Throwable cause) {
+    public FieldExistsException(Throwable cause) {
         super(cause);
     }
 }

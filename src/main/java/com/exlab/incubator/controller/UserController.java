@@ -5,8 +5,7 @@ import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.MessageDto;
 import com.exlab.incubator.dto.responses.UserDto;
 import com.exlab.incubator.service.UserService;
-import com.exlab.incubator.exception.EmailExistsException;
-import com.exlab.incubator.exception.UsernameExistsException;
+import com.exlab.incubator.exception.FieldExistsException;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,13 +59,9 @@ public class UserController {
         return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.OK);
     }
 
-    @ExceptionHandler({ UsernameExistsException.class})
-    public ResponseEntity<Object> handleException1() {
-        return new ResponseEntity<>("Error: Username already exists", HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(FieldExistsException.class)
+    public ResponseEntity<Object> handleException1(FieldExistsException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ EmailExistsException.class})
-    public ResponseEntity<Object> handleException2() {
-        return new ResponseEntity<>("Error: Email already exists", HttpStatus.BAD_REQUEST);
-    }
 }

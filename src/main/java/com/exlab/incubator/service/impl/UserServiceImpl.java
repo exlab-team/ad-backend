@@ -11,8 +11,7 @@ import com.exlab.incubator.repository.RoleRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.UserService;
-import com.exlab.incubator.exception.EmailExistsException;
-import com.exlab.incubator.exception.UsernameExistsException;
+import com.exlab.incubator.exception.FieldExistsException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -71,10 +70,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public MessageDto createUser(UserCreateDto userCreateDto) {
         if (userRepository.existsByUsername(userCreateDto.getUsername()))
-            throw new UsernameExistsException();
+            throw new FieldExistsException("Error: Username already exists");
 
         if (userRepository.existsByEmail(userCreateDto.getEmail()))
-            throw new EmailExistsException();
+            throw new FieldExistsException("Error: Email already exists");
 
         createAndSaveUser(userCreateDto);
 
