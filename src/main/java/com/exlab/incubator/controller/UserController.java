@@ -2,6 +2,7 @@ package com.exlab.incubator.controller;
 
 import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.requests.UserLoginDto;
+import com.exlab.incubator.dto.responses.ExceptionDto;
 import com.exlab.incubator.dto.responses.MessageDto;
 import com.exlab.incubator.dto.responses.UserDto;
 import com.exlab.incubator.exception.UserNotFoundException;
@@ -61,13 +62,17 @@ public class UserController {
     }
 
     @ExceptionHandler(FieldExistsException.class)
-    public ResponseEntity<Object> handleException1(FieldExistsException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ExceptionDto> handleException1(FieldExistsException e) {
+        return new ResponseEntity<>(
+            new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()),
+            HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> handleException2(UserNotFoundException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ExceptionDto> handleException2(UserNotFoundException e) {
+        return new ResponseEntity<>(
+            new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()),
+            HttpStatus.BAD_REQUEST);
     }
 
 }
