@@ -7,6 +7,7 @@ import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.responses.UserDto;
 import com.exlab.incubator.dto.responses.MessageDto;
 import com.exlab.incubator.entity.User;
+import com.exlab.incubator.exception.UserNotFoundException;
 import com.exlab.incubator.repository.RoleRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
@@ -113,7 +114,7 @@ public class UserServiceImpl implements UserService {
         String code = usernamePlusCode.substring(charAt + 1);
 
         User user = userRepository.findByUsername(decryptUsername)
-            .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found.", decryptUsername)));
+            .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", decryptUsername)));
 
         if (user.getIsConfirmed()) return "Your account is active";
 
@@ -134,7 +135,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public MessageDto resendingTheVerificationLink(String email) {
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), email);
         return new MessageDto("The resending of the link to the email was successful");
@@ -154,7 +155,7 @@ public class UserServiceImpl implements UserService {
 
     public String deleteUserById(int id){
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with %d id not found.", id)));
+            .orElseThrow(() -> new UserNotFoundException(String.format("User with %d id not found.", id)));
 
         userRepository.delete(user);
         return String.format("User with id - %d - deleted successfully", id);

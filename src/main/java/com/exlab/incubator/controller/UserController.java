@@ -4,6 +4,7 @@ import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.MessageDto;
 import com.exlab.incubator.dto.responses.UserDto;
+import com.exlab.incubator.exception.UserNotFoundException;
 import com.exlab.incubator.service.UserService;
 import com.exlab.incubator.exception.FieldExistsException;
 import javax.validation.Valid;
@@ -61,6 +62,11 @@ public class UserController {
 
     @ExceptionHandler(FieldExistsException.class)
     public ResponseEntity<Object> handleException1(FieldExistsException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Object> handleException2(UserNotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
