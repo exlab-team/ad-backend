@@ -39,13 +39,8 @@ public class UserController {
         return new ResponseEntity<>(userService.createUser(userCreateDto), HttpStatus.OK);
     }
 
-    @PostMapping("/{email}")
-    public ResponseEntity<MessageDto> resendingTheVerificationLink(@PathVariable String email) {
-        return new ResponseEntity<>(userService.resendingTheVerificationLink(email), HttpStatus.OK);
-    }
-
     @GetMapping("/{code}")
-    public ResponseEntity<String> activateUserByTheActivationCodeFromTheLink(@PathVariable String code) {
+    public ResponseEntity<String> activateUserAccount(@PathVariable String code) {
         return new ResponseEntity<>(userService.activateUserByCode(code), HttpStatus.OK);
     }
 

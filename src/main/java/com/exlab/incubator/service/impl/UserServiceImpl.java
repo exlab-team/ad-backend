@@ -15,6 +15,7 @@ import com.exlab.incubator.service.UserService;
 import com.exlab.incubator.exception.FieldExistsException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,49 +96,34 @@ public class UserServiceImpl implements UserService {
     }
 
     private User getUserWithTheNewActivationCode(User user){
-        String activationCode = UUID.randomUUID().toString();
-        user.setActivationCode(activationCode);
+        user.setActivationCode(UUID.randomUUID().toString());
         user.setTimeOfSendingTheConfirmationLink(new Date());
         return userRepository.save(user);
     }
 
     private void sendingAnEmailMessageForEmailVerification(User user, String email) {
-            String message = String.format("Please, visit next link: http://localhost:8080/users/%d.%s", user.getId(), user.getActivationCode());
+            String message = String.format("Please, visit next link: http://localhost:8080/users/%s", user.getActivationCode());
             mailSender.send(email, "Activation code", message);
     }
 
     @Override
-    public String activateUserByCode(String userIdAndActivationCodeString) {
-        int charAt = userIdAndActivationCodeString.indexOf(".");
+    public String activateUserByCode(String activationCode) {
 
-        int userId = Integer.parseInt(userIdAndActivationCodeString.substring(0, charAt));
-        String code = userIdAndActivationCodeString.substring(charAt + 1);
+        Optional<User> optionalUser = userRepository.findByActivationCode(activationCode);
+        if (!optionalUser.isPresent()){
+            return "This link is outdated(1)";
+        }
+        User user = optionalUser.get();
 
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with id %d not found", userId)));
-        if (user.getIsConfirmed()) return "Your account is active";
-
-        return accountActivation(user, user.getActivationCode().equals(code));
-    }
-
-    private String accountActivation(User user, boolean areTheCodesEqual) {
-        if (areTheCodesEqual && !user.getIsConfirmed()) {
+        if (user.getIsConfirmed()) {
+            return "Your account is active";
+        } else {
             user.setIsConfirmed(true);
             userRepository.save(user);
             return "Your account has been successfully activated";
-        } else {
-            return "This link is outdated";
         }
     }
 
-    @Override
-    public MessageDto resendingTheVerificationLink(String email) {
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), email);
-        return new MessageDto("The resending of the link to the email was successful");
-    }
 
     public String deleteUserById(int id){
         User user = userRepository.findById(id)
@@ -148,28 +134,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Scheduled(fixedDelay = 30000)
-    private void checkingUsersForTheEndOfTheVerificationTime(){
-        long currentTime = new Date().getTime();
-        List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
-            .collect(Collectors.toList());
-
-        users.stream().forEach(user -> {
-            if ((currentTime  - user.getCreatedAt().getTime()) >= (3600000 * 24)) {
-                userRepository.delete(user);
-            }
-        });
-    }
-
-    @Scheduled(fixedDelay = 30000)
-    private void checkingForLinkOutdated(){
+    private void deletingUsersWithAnOutdatedLink(){
         long currentTime = new Date().getTime();
         List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
             .collect(Collectors.toList());
 
         users.stream().forEach(user -> {
             if ((currentTime  - user.getTimeOfSendingTheConfirmationLink().getTime()) >= 300000) {
-                user.setActivationCode("outdated");
-                userRepository.save(user);
+                userRepository.delete(user);
             }
         });
     }
