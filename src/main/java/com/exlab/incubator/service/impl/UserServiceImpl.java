@@ -24,7 +24,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -118,17 +117,16 @@ public class UserServiceImpl implements UserService {
 
         if (user.getIsConfirmed()) return "Your account is active";
 
-        return activatingAnAccountOrSendingANewLink(user, user.getActivationCode().equals(code));
+        return accountActivation(user, user.getActivationCode().equals(code));
     }
 
-    private String activatingAnAccountOrSendingANewLink(User user, boolean areTheCodesEqual) {
+    private String accountActivation(User user, boolean areTheCodesEqual) {
         if (areTheCodesEqual && !user.getIsConfirmed()) {
             user.setIsConfirmed(true);
             userRepository.save(user);
             return "Your account has been successfully activated";
         } else {
-            sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), user.getEmail());
-            return "This link is outdated. Check your email for a new one";
+            return "This link is outdated";
         }
     }
 
