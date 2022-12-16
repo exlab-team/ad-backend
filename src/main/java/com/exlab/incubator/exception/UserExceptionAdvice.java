@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class UserExceptionsAdvice {
+public class UserExceptionAdvice {
 
     @ExceptionHandler({FieldExistsException.class, UserNotFoundException.class})
     public ResponseEntity<ExceptionDto> handleException(RuntimeException e) {
