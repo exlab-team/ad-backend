@@ -101,7 +101,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private void sendingAnEmailMessageForEmailVerification(User user) {
-            String message = String.format("Please, visit next link: http://localhost:8080/users/%s", user.getActivationCode());
+            String message = String.format("Пожалуйста, перейдите по данной ссылке для "
+                + "активации вашего аккаунта: http://localhost:8080/users/%s", user.getActivationCode());
             mailSender.send(user.getEmail(), "Activation code", message);
     }
 
