@@ -24,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -101,20 +102,19 @@ public class UserServiceImpl implements UserService {
     }
 
     private void sendingAnEmailMessageForEmailVerification(User user, String email) {
-            String encryptUsername = encryptTheUsername(user.getUsername());
-            String message = String.format("Please, visit next link: http://localhost:8080/users/%s.%s", encryptUsername, user.getActivationCode());
+            String message = String.format("Please, visit next link: http://localhost:8080/users/%d.%s", user.getId(), user.getActivationCode());
             mailSender.send(email, "Activation code", message);
     }
 
     @Override
-    public String activateUserByCode(String usernamePlusCode) {
-        int charAt = usernamePlusCode.indexOf(".");
-        String decryptUsername = decryptTheUsername(usernamePlusCode.substring(0, charAt));
-        String code = usernamePlusCode.substring(charAt + 1);
+    public String activateUserByCode(String userIdAndActivationCodeString) {
+        int charAt = userIdAndActivationCodeString.indexOf(".");
 
-        User user = userRepository.findByUsername(decryptUsername)
-            .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found.", decryptUsername)));
+        int userId = Integer.parseInt(userIdAndActivationCodeString.substring(0, charAt));
+        String code = userIdAndActivationCodeString.substring(charAt + 1);
 
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with id %d not found", userId)));
         if (user.getIsConfirmed()) return "Your account is active";
 
         return accountActivation(user, user.getActivationCode().equals(code));
@@ -137,18 +137,6 @@ public class UserServiceImpl implements UserService {
 
         sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), email);
         return new MessageDto("The resending of the link to the email was successful");
-    }
-
-    private String encryptTheUsername(String username){
-        StringBuilder stringBuilder = new StringBuilder();
-        username.chars().mapToObj(c -> (char) ++c).forEach(c -> stringBuilder.append(c));
-        return stringBuilder.toString();
-    }
-
-    private String decryptTheUsername(String username){
-        StringBuilder stringBuilder = new StringBuilder();
-        username.chars().mapToObj(c -> (char) --c).forEach(c -> stringBuilder.append(c));
-        return stringBuilder.toString();
     }
 
     public String deleteUserById(int id){
