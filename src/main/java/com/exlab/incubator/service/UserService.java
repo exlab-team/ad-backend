@@ -13,5 +13,5 @@ public interface UserService {
 
     String deleteUserById(int id);
 
-    String activateUserByCode(String code);
+    String activateUserByCode(String activationCode);
 }

@@ -25,7 +25,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -92,7 +91,7 @@ public class UserServiceImpl implements UserService {
             .roles(List.of(roleRepository.findById(1).get()))
             .build();
 
-        sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user), userCreateDto.getEmail());
+        sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user));
     }
 
     private User getUserWithTheNewActivationCode(User user){
@@ -101,9 +100,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    private void sendingAnEmailMessageForEmailVerification(User user, String email) {
+    private void sendingAnEmailMessageForEmailVerification(User user) {
             String message = String.format("Please, visit next link: http://localhost:8080/users/%s", user.getActivationCode());
-            mailSender.send(email, "Activation code", message);
+            mailSender.send(user.getEmail(), "Activation code", message);
     }
 
     @Override
@@ -111,16 +110,16 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> optionalUser = userRepository.findByActivationCode(activationCode);
         if (!optionalUser.isPresent()){
-            return "This link is outdated(1)";
+            return "This link is outdated.";
         }
         User user = optionalUser.get();
 
         if (user.getIsConfirmed()) {
-            return "Your account is active";
+            return "Your account is active.";
         } else {
             user.setIsConfirmed(true);
             userRepository.save(user);
-            return "Your account has been successfully activated";
+            return "Your account has been successfully activated.";
         }
     }
 

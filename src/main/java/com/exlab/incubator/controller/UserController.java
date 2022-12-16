@@ -39,9 +39,9 @@ public class UserController {
         return new ResponseEntity<>(userService.createUser(userCreateDto), HttpStatus.OK);
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<String> activateUserAccount(@PathVariable String code) {
-        return new ResponseEntity<>(userService.activateUserByCode(code), HttpStatus.OK);
+    @GetMapping("/{activationCode}")
+    public ResponseEntity<String> activateUserAccount(@PathVariable String activationCode) {
+        return new ResponseEntity<>(userService.activateUserByCode(activationCode), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('USER')")
