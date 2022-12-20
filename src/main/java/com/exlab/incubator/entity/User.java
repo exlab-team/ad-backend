@@ -26,7 +26,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class User{
-    //commit from registry_mamatsiuk
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +41,7 @@ public class User{
     private String email;
 
     @Column(name = "is_confirmed")
-    private Boolean isConfirmed;
+    private boolean confirmed;
 
     @Column(name = "created_at")
     private Date createdAt;

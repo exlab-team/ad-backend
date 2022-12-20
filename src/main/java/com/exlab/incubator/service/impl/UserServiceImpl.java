@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
             .username(userCreateDto.getUsername())
             .password(passwordEncoder.encode(userCreateDto.getPassword()))
             .email(userCreateDto.getEmail())
-            .isConfirmed(false)
+            .confirmed(false)
             .createdAt(new Date())
             .roles(List.of(roleRepository.findById(1).get()))
             .build();
@@ -115,10 +115,10 @@ public class UserServiceImpl implements UserService {
         }
         User user = optionalUser.get();
 
-        if (user.getIsConfirmed()) {
+        if (user.isConfirmed()) {
             return "Your account is active.";
         } else {
-            user.setIsConfirmed(true);
+            user.setConfirmed(true);
             userRepository.save(user);
             return "Your account has been successfully activated.";
         }
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
     @Scheduled(fixedDelay = 30000)
     private void deletingUsersWithAnOutdatedLink(){
         long currentTime = new Date().getTime();
-        List<User> users = userRepository.findAll().stream().filter((user) -> user.getIsConfirmed() == false)
+        List<User> users = userRepository.findAll().stream().filter((user) -> user.isConfirmed() == false)
             .collect(Collectors.toList());
 
         users.stream().forEach(user -> {
