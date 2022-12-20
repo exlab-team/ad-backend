@@ -26,6 +26,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class User{
+    //commit from registry_mamatsiuk
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
