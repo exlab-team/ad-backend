@@ -7,8 +7,10 @@ import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.responses.UserDto;
 import com.exlab.incubator.dto.responses.MessageDto;
 import com.exlab.incubator.entity.User;
+import com.exlab.incubator.entity.UserAccount;
 import com.exlab.incubator.exception.UserNotFoundException;
 import com.exlab.incubator.repository.RoleRepository;
+import com.exlab.incubator.repository.UserAccountRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.UserService;
@@ -38,17 +40,19 @@ public class UserServiceImpl implements UserService {
     private JwtUtils jwtUtils;
 
     private RoleRepository roleRepository;
+    private UserAccountRepository userAccountRepository;
     private MailSender mailSender;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
         AuthenticationManager authenticationManager, JwtUtils jwtUtils, RoleRepository roleRepository,
-        MailSender mailSender) {
+        UserAccountRepository userAccountRepository, MailSender mailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.roleRepository = roleRepository;
+        this.userAccountRepository = userAccountRepository;
         this.mailSender = mailSender;
     }
 
@@ -120,6 +124,9 @@ public class UserServiceImpl implements UserService {
         } else {
             user.setConfirmed(true);
             userRepository.save(user);
+            userAccountRepository.save(UserAccount.builder()
+                .userId(user.getId())
+                .build());
             return "Your account has been successfully activated.";
         }
     }
@@ -129,6 +136,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(String.format("User with %d id not found.", id)));
 
+        UserAccount userAccount = userAccountRepository.findByUserId(id).get();
+        userAccountRepository.delete(userAccount);
         userRepository.delete(user);
         return String.format("User with id - %d - deleted successfully", id);
     }
