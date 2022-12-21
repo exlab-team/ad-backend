@@ -40,7 +40,7 @@ public class User{
     @Column(nullable = false, length = 70, unique = true)
     private String email;
 
-    @Column(name = "is_confirmed")
+    @Column(name = "confirmed")
     private boolean confirmed;
 
     @Column(name = "created_at")
