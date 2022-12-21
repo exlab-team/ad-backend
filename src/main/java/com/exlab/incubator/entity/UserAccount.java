@@ -17,20 +17,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "private_offices")
+@Table(name = "user_accounts")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PrivateOffice {
+public class UserAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private int userId;
 
     @Column(length = 30, name = "tariff")
     private String tariff;
@@ -41,16 +40,16 @@ public class PrivateOffice {
 
     @ManyToMany
     @JoinTable(
-        name = "private_offices_social_networks",
-        joinColumns = @JoinColumn(name = "private_office_id"),
+        name = "user_accounts_social_networks",
+        joinColumns = @JoinColumn(name = "user_account_id"),
         inverseJoinColumns = @JoinColumn(name = "social_network_id")
     )
     private List<SocialNetwork> socialNetworks;
 
     @ManyToMany
     @JoinTable(
-        name = "private_offices_advisory_materials",
-        joinColumns = @JoinColumn(name = "private_office_id"),
+        name = "user_accounts_advisory_materials",
+        joinColumns = @JoinColumn(name = "user_account_id"),
         inverseJoinColumns = @JoinColumn(name = "advisory_material_id")
     )
     private List<AdvisoryMaterial> advisoryMaterials;
