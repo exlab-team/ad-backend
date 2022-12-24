@@ -22,7 +22,7 @@ public class AdvisoryMaterial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(nullable = false, length = 45)
     private String topic;

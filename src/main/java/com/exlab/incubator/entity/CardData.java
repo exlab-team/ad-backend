@@ -21,7 +21,7 @@ public class CardData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(nullable = false, length = 16, name = "card_number")
     private String cardNumber;
