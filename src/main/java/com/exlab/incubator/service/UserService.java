@@ -11,7 +11,7 @@ public interface UserService {
 
     MessageDto createUser(UserCreateDto userCreateDto);
 
-    String deleteUserById(int id);
+    String deleteUserById(long id);
 
     String activateUserByCode(String activationCode);
 }

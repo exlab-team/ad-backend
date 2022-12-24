@@ -7,12 +7,12 @@ public class UserDto {
 
     private String token;
     private String type = "Bearer";
-    private int id;
+    private long id;
     private String username;
     private String email;
 
 
-    public UserDto(String token, int id, String username, String email) {
+    public UserDto(String token, long id, String username, String email) {
         this.token = token;
         this.id = id;
         this.username = username;

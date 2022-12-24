@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class UserDetailsImpl implements UserDetails {
 
     private static final long serialVersionUID = 1L;
-    private int id;
+    private long id;
     private String username;
     @JsonIgnore
     private String password;

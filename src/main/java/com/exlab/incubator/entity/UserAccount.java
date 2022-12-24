@@ -28,10 +28,10 @@ public class UserAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(name = "user_id", nullable = false)
-    private int userId;
+    private long userId;
 
     @Column(length = 30, name = "tariff")
     private String tariff;
