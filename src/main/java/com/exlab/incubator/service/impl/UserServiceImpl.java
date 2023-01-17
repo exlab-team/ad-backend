@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public String deleteUserById(long id){
+    public MessageDto deleteUserById(long id){
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(String.format("User with %d id not found.", id)));
 
@@ -141,7 +141,7 @@ public class UserServiceImpl implements UserService {
             userAccountRepository.delete(userAccount.get());
         }
         userRepository.delete(user);
-        return String.format("User with id - %d - deleted successfully", id);
+        return new MessageDto(String.format("User with id - %d - deleted successfully", id));
     }
 
     @Scheduled(fixedDelay = 30000)

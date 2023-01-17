@@ -46,7 +46,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable int id){
+    public ResponseEntity<MessageDto> deleteUser(@PathVariable int id){
         return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.OK);
     }
 }
