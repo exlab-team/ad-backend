@@ -4,15 +4,19 @@ services:
     container_name: incubator-app
     image: incubator-app
     build: ./
+    env_file:
+      - .env
     ports:
-      - "8080:8080"
+      - "${PORT}:${PORT}"
     depends_on:
       - postgresqldb
   postgresqldb:
     image: postgres
     ports:
       - "5432:5432"
+    env_file:
+      - .env
     environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=dockerincubator
+      - POSTGRES_PASSWORD=$DB_PASS
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_DB=incubator
