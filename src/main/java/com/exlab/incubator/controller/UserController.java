@@ -19,34 +19,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/v1/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping
-    public ResponseEntity<UserDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
-        return new ResponseEntity<>(userService.loginUser(userLoginDto), HttpStatus.OK);
-    }
-
     @PostMapping
     public ResponseEntity<MessageDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        return new ResponseEntity<>(userService.createUser(userCreateDto), HttpStatus.OK);
-    }
-
-    @GetMapping("/{activationCode}")
-    public ResponseEntity<String> activateUserAccount(@PathVariable String activationCode) {
-        return new ResponseEntity<>(userService.activateUserByCode(activationCode), HttpStatus.OK);
+        return new ResponseEntity<>(userService.createUser(userCreateDto), HttpStatus.CREATED); //исправила статус, изменить возвращаемое значение
     }
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageDto> deleteUser(@PathVariable int id){
-        return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.OK);
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
+        return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.NO_CONTENT); //исправила статус, изменить возвращаемое значение
     }
 }

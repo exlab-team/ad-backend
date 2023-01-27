@@ -10,12 +10,6 @@ public class UserDto {
     private long id;
     private String username;
     private String email;
+    private boolean emailVerified;  //добавила
 
-
-    public UserDto(String token, long id, String username, String email) {
-        this.token = token;
-        this.id = id;
-        this.username = username;
-        this.email = email;
-    }
 }

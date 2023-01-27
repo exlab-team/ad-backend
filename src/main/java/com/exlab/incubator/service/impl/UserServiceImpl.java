@@ -15,6 +15,8 @@ import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.UserService;
 import com.exlab.incubator.exception.FieldExistsException;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,18 +36,18 @@ import org.springframework.stereotype.Service;
 @EnableScheduling
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private AuthenticationManager authenticationManager;
-    private JwtUtils jwtUtils;
-
-    private RoleRepository roleRepository;
-    private UserAccountRepository userAccountRepository;
-    private MailSender mailSender;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
+    private final RoleRepository roleRepository;
+    private final UserAccountRepository userAccountRepository;
+    private final MailSender mailSender;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-        AuthenticationManager authenticationManager, JwtUtils jwtUtils, RoleRepository roleRepository,
+        AuthenticationManager authenticationManager, JwtUtils jwtUtils,
+        RoleRepository roleRepository,
         UserAccountRepository userAccountRepository, MailSender mailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -64,25 +66,31 @@ public class UserServiceImpl implements UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        return new UserDto(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail());
+        return new UserDto(jwt, userDetails.getId(), userDetails.getUsername(),
+            userDetails.getEmail(),
+            userDetails.isEmailVerified());  // добавила
     }
 
     private Authentication getAuthentication(UserLoginDto userLoginDto) {
         return authenticationManager
-            .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword()));
+            .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
+                userLoginDto.getPassword()));
     }
 
     @Override
     public MessageDto createUser(UserCreateDto userCreateDto) {
-        if (userRepository.existsByUsername(userCreateDto.getUsername()))
-            throw new FieldExistsException("Error: Username already exists");
+        if (userRepository.existsByUsername(userCreateDto.getUsername())) {
+            throw new FieldExistsException(
+                "Error: Username already exists"); //вынести в контроллер и возвращать BadRequest
+        }
 
-        if (userRepository.existsByEmail(userCreateDto.getEmail()))
+        if (userRepository.existsByEmail(userCreateDto.getEmail())) {
             throw new FieldExistsException("Error: Email already exists");
+        }
 
         createAndSaveUser(userCreateDto);
 
-        return new MessageDto("Mail confirmation is expected");
+        return new MessageDto("Mail confirmation is expected"); // или UserReadDto или id
     }
 
     private void createAndSaveUser(UserCreateDto userCreateDto) {
@@ -90,39 +98,40 @@ public class UserServiceImpl implements UserService {
             .username(userCreateDto.getUsername())
             .password(passwordEncoder.encode(userCreateDto.getPassword()))
             .email(userCreateDto.getEmail())
-            .confirmed(false)
-            .createdAt(new Date())
+            .emailVerified(false)
+            .createdAt(Instant.now())
             .roles(List.of(roleRepository.findById(1).get()))
             .build();
 
         sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user));
     }
 
-    private User getUserWithTheNewActivationCode(User user){
+    private User getUserWithTheNewActivationCode(User user) {
         user.setActivationCode(UUID.randomUUID().toString());
-        user.setTimeOfSendingTheConfirmationLink(new Date());
+        user.setTimeOfSendingVerificationLink(Instant.now());
         return userRepository.save(user);
     }
 
     private void sendingAnEmailMessageForEmailVerification(User user) {
-            String message = String.format("Пожалуйста, перейдите по данной ссылке для "
-                + "активации вашего аккаунта: http://localhost:8088/users/%s",  user.getActivationCode());
-            mailSender.send(user.getEmail(), "Activation code", message);
+        String message = String.format("Пожалуйста, перейдите по данной ссылке для "
+                + "активации вашего аккаунта: http://localhost:8088/api/v1/auth/%s",
+            user.getActivationCode());
+        mailSender.send(user.getEmail(), "Activation code", message);
     }
 
     @Override
     public String activateUserByCode(String activationCode) {
 
         Optional<User> optionalUser = userRepository.findByActivationCode(activationCode);
-        if (!optionalUser.isPresent()){
+        if (optionalUser.isEmpty()) {
             return "This link is outdated.";
         }
         User user = optionalUser.get();
 
-        if (user.isConfirmed()) {
+        if (user.isEmailVerified()) {
             return "Your account is active.";
         } else {
-            user.setConfirmed(true);
+            user.setEmailVerified(true);
             userRepository.save(user);
             userAccountRepository.save(UserAccount.builder()
                 .userId(user.getId())
@@ -132,26 +141,26 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public MessageDto deleteUserById(long id){
+    public MessageDto deleteUserById(long id) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(String.format("User with %d id not found.", id)));
+            .orElseThrow(
+                () -> new UserNotFoundException(String.format("User with %d id not found.", id)));
 
         Optional<UserAccount> userAccount = userAccountRepository.findByUserId(id);
-        if (userAccount.isPresent()) {
-            userAccountRepository.delete(userAccount.get());
-        }
+        userAccount.ifPresent(account -> userAccountRepository.delete(account));
         userRepository.delete(user);
         return new MessageDto(String.format("User with id - %d - deleted successfully", id));
     }
 
     @Scheduled(fixedDelay = 30000)
-    private void deletingUsersWithAnOutdatedLink(){
-        long currentTime = new Date().getTime();
-        List<User> users = userRepository.findAll().stream().filter((user) -> user.isConfirmed() == false)
-            .collect(Collectors.toList());
+    private void deletingUsersWithAnOutdatedLink() {
+        long currentTime = Instant.now().toEpochMilli();
+        List<User> users = userRepository.findAll().stream()
+            .filter((user) -> !user.isEmailVerified())
+            .toList();
 
-        users.stream().forEach(user -> {
-            if ((currentTime  - user.getTimeOfSendingTheConfirmationLink().getTime()) >= 300000) {
+        users.forEach(user -> {
+            if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli()) >= 300000) {
                 userRepository.delete(user);
             }
         });

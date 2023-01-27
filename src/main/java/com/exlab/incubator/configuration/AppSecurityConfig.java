@@ -34,8 +34,10 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder)
+        throws Exception {
+        authenticationManagerBuilder.userDetailsService(userDetailsService)
+            .passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -59,17 +61,20 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-                .antMatchers("/test/public").permitAll()
-                .antMatchers("/users/**").permitAll()
-                .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/webjars/**").permitAll()
-                .anyRequest().authenticated()
+            .antMatchers("/test/public").permitAll()
+            .antMatchers("/api/v1/auth/**").permitAll()
+            .antMatchers("/api/v1/users/**").permitAll()
+            .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/webjars/**")
+            .permitAll()
+            .anyRequest().authenticated()
             .and()
             .rememberMe()
-                .tokenValiditySeconds(1440)
+            .tokenValiditySeconds(1440)
             .and()
             .logout();
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationJwtTokenFilter(),
+            UsernamePasswordAuthenticationFilter.class);
     }
 
 

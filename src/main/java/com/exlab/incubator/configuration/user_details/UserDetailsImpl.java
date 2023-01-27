@@ -21,6 +21,7 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private String email;
+    private boolean emailVerified;  //добавила и в build()
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -28,8 +29,8 @@ public class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> authorities = user.getRoles()
             .stream().map(role -> new SimpleGrantedAuthority(role.getName()))
             .collect(Collectors.toList());
-        return new UserDetailsImpl(user.getId(), user.getUsername(),  user.getPassword(),
-            user.getEmail(), authorities);
+        return new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(),
+            user.getEmail(), user.isEmailVerified(), authorities);
     }
 
     @Override

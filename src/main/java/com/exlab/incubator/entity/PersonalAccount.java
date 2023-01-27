@@ -1,5 +1,6 @@
 package com.exlab.incubator.entity;
 
+import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,4 +26,7 @@ public class PersonalAccount {
 
     @Column(nullable = false, length = 100)
     private String accountNumber;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
 }

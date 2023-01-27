@@ -1,5 +1,6 @@
 package com.exlab.incubator.entity;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -25,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User{
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,14 +41,14 @@ public class User{
     @Column(nullable = false, length = 70, unique = true)
     private String email;
 
-    @Column(name = "confirmed")
-    private boolean confirmed;
+    @Column(name = "email_verified")
+    private boolean emailVerified;
 
     @Column(name = "created_at")
-    private Date createdAt;
+    private Instant createdAt;
 
-    @Column(name = "time_of_sending_the_confirmation_link")
-    private Date timeOfSendingTheConfirmationLink;
+    @Column(name = "time_of_sending_verification_link")
+    private Instant timeOfSendingVerificationLink;
 
     @Column(length = 50, name = "activation_code")
     private String activationCode;
