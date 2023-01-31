@@ -1,11 +1,13 @@
 package com.exlab.incubator.controller;
 
+import static org.springframework.http.ResponseEntity.badRequest;
+import static org.springframework.http.ResponseEntity.ok;
+
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserDto;
 import com.exlab.incubator.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,15 +31,14 @@ public class AuthController {
     public ResponseEntity<UserDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
         UserDto userDto = userService.loginUser(userLoginDto);
         return userDto.isEmailVerified()
-            ? ResponseEntity.ok(userDto)
-            : ResponseEntity.badRequest().build();
-
-           /* ? new ResponseEntity<>(userDto, HttpStatus.OK)
-            : new ResponseEntity<>(HttpStatus.BAD_REQUEST); // добавила проверку*/
+            ? ok(userDto)
+            : badRequest().build();
     }
 
     @GetMapping("/{activationCode}")
-    public ResponseEntity<String> activateUserAccount(@PathVariable String activationCode) {
-        return new ResponseEntity<>(userService.activateUserByCode(activationCode), HttpStatus.OK);
+    public ResponseEntity<?> activateUserAccount(@PathVariable String activationCode) {
+        return userService.activateUserByCode(activationCode)
+            ? ok().build()
+            : badRequest().build();
     }
 }
