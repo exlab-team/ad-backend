@@ -1,12 +1,10 @@
 package com.exlab.incubator.dto.requests;
 
 import com.exlab.incubator.validation.PasswordEquality;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import lombok.Value;
 
 @Value
@@ -32,7 +30,7 @@ public class UserCreateDto {
     @NotBlank
     @Size(max = 256, message = "Email max size is 256 symbols")
     @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-            + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$", message = "Email can contains only letters, numbers and symbols: { underscore “_”, hyphen “-“, and dot “.”}")
+        + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$", message = "Email can contains only letters, numbers and symbols: { underscore “_”, hyphen “-“, and dot “.”}")
     private String email;
 
 }

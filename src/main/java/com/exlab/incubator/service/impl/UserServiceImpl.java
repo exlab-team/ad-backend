@@ -2,26 +2,22 @@ package com.exlab.incubator.service.impl;
 
 import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.configuration.user_details.UserDetailsImpl;
-import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.requests.UserCreateDto;
+import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserDto;
-import com.exlab.incubator.dto.responses.MessageDto;
 import com.exlab.incubator.entity.User;
 import com.exlab.incubator.entity.UserAccount;
-import com.exlab.incubator.exception.UserNotFoundException;
+import com.exlab.incubator.exception.FieldExistsException;
 import com.exlab.incubator.repository.RoleRepository;
 import com.exlab.incubator.repository.UserAccountRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.UserService;
-import com.exlab.incubator.exception.FieldExistsException;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -67,8 +63,7 @@ public class UserServiceImpl implements UserService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         return new UserDto(jwt, userDetails.getId(), userDetails.getUsername(),
-            userDetails.getEmail(),
-            userDetails.isEmailVerified());  // добавила
+            userDetails.getEmail(), userDetails.isEmailVerified());
     }
 
     private Authentication getAuthentication(UserLoginDto userLoginDto) {
@@ -78,32 +73,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public MessageDto createUser(UserCreateDto userCreateDto) {
+    public Long createUser(UserCreateDto userCreateDto) {
         if (userRepository.existsByUsername(userCreateDto.getUsername())) {
             throw new FieldExistsException(
-                "Error: Username already exists"); //вынести в контроллер и возвращать BadRequest
+                "Error: Username already exists");
         }
 
         if (userRepository.existsByEmail(userCreateDto.getEmail())) {
             throw new FieldExistsException("Error: Email already exists");
         }
 
-        createAndSaveUser(userCreateDto);
-
-        return new MessageDto("Mail confirmation is expected"); // или UserReadDto или id
+        return createAndSaveUser(userCreateDto);
     }
 
-    private void createAndSaveUser(UserCreateDto userCreateDto) {
+    private Long createAndSaveUser(UserCreateDto userCreateDto) {
         User user = User.builder()
             .username(userCreateDto.getUsername())
             .password(passwordEncoder.encode(userCreateDto.getPassword()))
             .email(userCreateDto.getEmail())
             .emailVerified(false)
             .createdAt(Instant.now())
-            .roles(List.of(roleRepository.findById(1).get()))
+            .roles(Set.of(roleRepository.findById(1).get()))
             .build();
 
-        sendingAnEmailMessageForEmailVerification(getUserWithTheNewActivationCode(user));
+        User savedUser = getUserWithTheNewActivationCode(user);
+        sendingAnEmailMessageForEmailVerification(savedUser);
+        return savedUser.getId();
     }
 
     private User getUserWithTheNewActivationCode(User user) {
@@ -120,36 +115,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String activateUserByCode(String activationCode) {
+    public boolean activateUserByCode(String activationCode) {
 
         Optional<User> optionalUser = userRepository.findByActivationCode(activationCode);
         if (optionalUser.isEmpty()) {
-            return "This link is outdated.";
+            return false;
         }
         User user = optionalUser.get();
 
         if (user.isEmailVerified()) {
-            return "Your account is active.";
+            return false;
         } else {
             user.setEmailVerified(true);
             userRepository.save(user);
             userAccountRepository.save(UserAccount.builder()
-                .userId(user.getId())
+                .user(user)
                 .build());
-            return "Your account has been successfully activated.";
+            return true;
         }
     }
 
-
-    public MessageDto deleteUserById(long id) {
-        User user = userRepository.findById(id)
-            .orElseThrow(
-                () -> new UserNotFoundException(String.format("User with %d id not found.", id)));
-
-        Optional<UserAccount> userAccount = userAccountRepository.findByUserId(id);
-        userAccount.ifPresent(account -> userAccountRepository.delete(account));
-        userRepository.delete(user);
-        return new MessageDto(String.format("User with id - %d - deleted successfully", id));
+    @Override
+    public boolean deleteUserById(long id) {
+        return userRepository.findById(id)
+            .map(entity -> {
+                userRepository.delete(entity);
+                userRepository.flush();
+                return true;
+            })
+            .orElse(false);
     }
 
     @Scheduled(fixedDelay = 30000)
