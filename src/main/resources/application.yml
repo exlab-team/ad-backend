@@ -33,3 +33,7 @@ spring:
       mail:
         smtp:
           auth: true
+
+
+  liquibase:
+    enabled: true
