@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-personal-accounts
+      author: Yulia Nekhaichyk
+      changes:
+        - createTable: 
+            tableName: personal_accounts
+            columns: 
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: accountNumber
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+	      
+                  
+                 
