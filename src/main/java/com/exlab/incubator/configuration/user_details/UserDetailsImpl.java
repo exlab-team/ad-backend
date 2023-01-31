@@ -2,8 +2,9 @@ package com.exlab.incubator.configuration.user_details;
 
 import com.exlab.incubator.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serial;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,20 +16,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private long id;
     private String username;
     @JsonIgnore
     private String password;
     private String email;
-    private boolean emailVerified;  //добавила и в build()
+    private boolean emailVerified;
 
     private Collection<? extends GrantedAuthority> authorities;
 
     public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles()
+        Set<GrantedAuthority> authorities = user.getRoles()
             .stream().map(role -> new SimpleGrantedAuthority(role.getName()))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
         return new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(),
             user.getEmail(), user.isEmailVerified(), authorities);
     }
