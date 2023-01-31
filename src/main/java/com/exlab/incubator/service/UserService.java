@@ -9,9 +9,9 @@ public interface UserService {
 
     UserDto loginUser(UserLoginDto userLoginDto);
 
-    MessageDto createUser(UserCreateDto userCreateDto);
+    Long createUser(UserCreateDto userCreateDto);
 
-    MessageDto deleteUserById(long id);
+    boolean deleteUserById(long id);
 
-    String activateUserByCode(String activationCode);
+    boolean activateUserByCode(String activationCode);
 }
