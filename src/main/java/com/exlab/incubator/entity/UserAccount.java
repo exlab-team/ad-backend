@@ -30,8 +30,9 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "user_id", nullable = false)
-    private long userId;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(length = 30, name = "tariff")
     private String tariff;
