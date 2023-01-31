@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-social-networks
+      author: Yulia Nekhaichyk
+      changes:
+        - createTable: 
+            tableName: social_networks
+            columns: 
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+	      - column:
+                  name: link
+                  type: varchar(150)
+                 
