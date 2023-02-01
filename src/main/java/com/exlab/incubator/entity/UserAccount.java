@@ -3,6 +3,8 @@ package com.exlab.incubator.entity;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,8 +36,8 @@ public class UserAccount {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(length = 30, name = "tariff")
-    private String tariff;
+    @Enumerated(EnumType.STRING)
+    private Tariff tariff;
 
     @OneToOne
     @JoinColumn(name = "personal_account_id", referencedColumnName = "id")
