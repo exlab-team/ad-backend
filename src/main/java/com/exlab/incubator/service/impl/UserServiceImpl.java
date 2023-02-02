@@ -137,10 +137,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteUserById(long id) {
-        return userRepository.findById(id)
+
+        return userAccountRepository.findByUserId(id)
             .map(entity -> {
-                userRepository.delete(entity);
-                userRepository.flush();
+                userAccountRepository.delete(entity);
+                userAccountRepository.flush();
                 return true;
             })
             .orElse(false);
