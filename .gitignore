@@ -5,7 +5,7 @@ build/generated
 build/resources
 build/tmp
 build/bootJarMainClassName
-!build/libs/*.jar
+!build/libs/**
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
