@@ -91,7 +91,6 @@ public class UserServiceImpl implements UserService {
         return createAndSaveUser(userCreateDto, role);
     }
 
-
     private Long createAndSaveUser(UserCreateDto userCreateDto, Role role) {
         User user = User.builder()
             .username(userCreateDto.getUsername())
@@ -117,9 +116,6 @@ public class UserServiceImpl implements UserService {
         String link = String.format("http://localhost:8088/api/v1/auth/%s", user.getActivationCode());
         mailSender.send(user.getEmail(), "Account activation", buildEmail(user.getUsername(), link));
     }
-
-
-
 
     @Override
     public boolean activateUserByCode(String activationCode) {
