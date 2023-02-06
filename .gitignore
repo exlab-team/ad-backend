@@ -5,7 +5,10 @@ build/generated
 build/resources
 build/tmp
 build/bootJarMainClassName
-!build/libs/**
+build/test-results
+build/reports
+build/libs/incubator-0.0.1-SNAPSHOT-plain.jar
+!build/libs/incubator-0.0.1-SNAPSHOT.jar
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
