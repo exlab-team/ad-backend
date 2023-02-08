@@ -4,6 +4,7 @@ import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.configuration.user_details.UserDetailsImpl;
 import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.requests.UserLoginDto;
+import com.exlab.incubator.dto.responses.UserAccountReadDto;
 import com.exlab.incubator.dto.responses.UserDto;
 import com.exlab.incubator.entity.Role;
 import com.exlab.incubator.entity.User;
@@ -11,8 +12,10 @@ import com.exlab.incubator.entity.UserAccount;
 import com.exlab.incubator.exception.ActivationCodeException;
 import com.exlab.incubator.exception.EmailVerifiedException;
 import com.exlab.incubator.exception.FieldExistsException;
+import com.exlab.incubator.exception.UserAccountNotFoundException;
 import com.exlab.incubator.exception.UserNotFoundException;
 import com.exlab.incubator.repository.RoleRepository;
+import com.exlab.incubator.repository.UserAccountRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.UserService;
@@ -37,24 +40,24 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final UserAccountRepository userAccountRepository;
     private final JwtUtils jwtUtils;
-    private final RoleRepository roleRepository;
     private final MailSender mailSender;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
         AuthenticationManager authenticationManager, JwtUtils jwtUtils,
-        RoleRepository roleRepository, MailSender mailSender) {
+        UserAccountRepository userAccountRepository, MailSender mailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
-        this.roleRepository = roleRepository;
+        this.userAccountRepository = userAccountRepository;
         this.mailSender = mailSender;
     }
 
     @Override
-    public UserDto loginUser(UserLoginDto userLoginDto) {
+    public UserAccountReadDto loginUser(UserLoginDto userLoginDto) {
 
         Authentication authentication = getAuthentication(userLoginDto);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -65,8 +68,17 @@ public class UserServiceImpl implements UserService {
             throw new EmailVerifiedException("Email doesn't verified");
         }
 
-        return new UserDto(jwt, userDetails.getId(), userDetails.getUsername(),
-            userDetails.getEmail());
+        UserAccount userAccount = userAccountRepository.findByUserId(
+                userDetails.getId())
+            .orElseThrow(() -> new UserAccountNotFoundException("Account not found"));
+
+        return UserAccountReadDto.builder()
+            .token(jwt)
+            .accountId(userAccount.getId())
+            .username(userDetails.getUsername())
+            .email(userDetails.getEmail())
+            .personalAccount(userAccount.getPersonalAccount())
+            .build();
     }
 
     private Authentication getAuthentication(UserLoginDto userLoginDto) {
@@ -115,25 +127,6 @@ public class UserServiceImpl implements UserService {
     private void sendingAnEmailMessageForEmailVerification(User user) {
         String link = String.format("http://5.101.51.87:8088/api/v1/auth/%s", user.getActivationCode());
         mailSender.send(user.getEmail(), "Account activation", buildEmail(user.getUsername(), link));
-    }
-
-    @Override
-    public boolean activateUserByCode(String activationCode) {
-
-        User user = userRepository.findByActivationCode(activationCode)
-            .orElseThrow(() -> new ActivationCodeException("Activation code is invalid"));
-
-        if (user.isEmailVerified()) {
-            return false;
-        } else {
-            user.setEmailVerified(true);
-            UserAccount userAccount = UserAccount.builder()
-                .user(user)
-                .build();
-            user.setUserAccount(userAccount);
-            userRepository.save(user);
-            return true;
-        }
     }
 
     @Override
