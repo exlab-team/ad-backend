@@ -1,7 +1,9 @@
 package com.exlab.incubator.controller;
 
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.notFound;
+
 import com.exlab.incubator.dto.requests.TariffDto;
-import com.exlab.incubator.dto.responses.UserAccountReadDto;
 import com.exlab.incubator.entity.Tariff;
 import com.exlab.incubator.service.TariffService;
 import com.exlab.incubator.service.UserAccountService;
@@ -10,10 +12,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,4 +59,5 @@ public class UserAccountController {
             ? ResponseEntity.ok().build()
             : ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
+
 }
