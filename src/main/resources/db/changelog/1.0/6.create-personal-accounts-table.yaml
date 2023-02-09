@@ -1,11 +1,11 @@
 databaseChangeLog:
   - changeSet:
       id: create-personal-accounts
-      author: Yulia Nekhaichyk
+      author: Yulia Nexai
       changes:
-        - createTable: 
+        - createTable:
             tableName: personal_accounts
-            columns: 
+            columns:
               - column:
                   name: id
                   type: bigint
@@ -14,10 +14,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: accountNumber
+                  name: account_number
                   type: varchar(100)
                   constraints:
                     nullable: false
-	      
-                  
-                 

@@ -1,11 +1,11 @@
 databaseChangeLog:
   - changeSet:
-      id: create-role
-      author: Yulia Nekhaichyk
+      id: create-social-networks
+      author: Yulia Nexai
       changes:
-        - createTable: 
-            tableName: roles
-            columns: 
+        - createTable:
+            tableName: social_networks
+            columns:
               - column:
                   name: id
                   type: bigint
@@ -15,8 +15,9 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: varchar(40)
+                  type: varchar(50)
                   constraints:
                     nullable: false
-	      
-                 
+              - column:
+                  name: link
+                  type: varchar(150)

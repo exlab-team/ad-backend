@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-accounts-advisory-materials
+      author: Yulia Nexai
+      changes:
+        - createTable:
+            tableName: user_accounts_advisory_materials
+            columns:
+              - column:
+                  name: advisory_material_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_account_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: add-foreign-key-user_accounts_advisory_materials
+      author: Yulia Nexai
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: advisory_material_id
+            baseTableName: user_accounts_advisory_materials
+            constraintName: user_accounts_advisory_materials_fk
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: advisory_materials
+  - changeSet:
+      id: add-foreign-key-user_accounts_advisory_materials-2
+      author: Yulia Nexai
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_account_id
+            baseTableName: user_accounts_advisory_materials
+            constraintName: advisory_materials_user_accounts_fk
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: users

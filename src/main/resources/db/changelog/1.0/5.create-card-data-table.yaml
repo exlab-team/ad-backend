@@ -1,11 +1,11 @@
 databaseChangeLog:
   - changeSet:
       id: create-card-data
-      author: Yulia Nekhaichyk
+      author: Yulia Nexai
       changes:
-        - createTable: 
+        - createTable:
             tableName: card_data
-            columns: 
+            columns:
               - column:
                   name: id
                   type: bigint
@@ -18,22 +18,22 @@ databaseChangeLog:
                   type: varchar(16)
                   constraints:
                     nullable: false
-	      - column:
+              - column:
                   name: card_owner
                   type: varchar(30)
                   constraints:
                     nullable: false
-	      - column:
+              - column:
                   name: expiration_date
                   type: varchar(5)
                   constraints:
                     nullable: false
-  	      - column:
+              - column:
                   name: cvv_code
                   type: int
                   constraints:
                     nullable: false
-	      - column:
+              - column:
                   name: total_balance
                   type: double
- 	      
+
