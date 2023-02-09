@@ -5,13 +5,10 @@ import static org.springframework.http.ResponseEntity.ok;
 
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserDto;
-import com.exlab.incubator.exception.IncorrectFieldException;
 import com.exlab.incubator.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,12 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto, BindingResult result) {
-        if (result.hasErrors()) {
-            for (FieldError error : result.getFieldErrors()) {
-                throw new IncorrectFieldException(error.getDefaultMessage());
-            }
-        }
+    public ResponseEntity<UserDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
         UserDto userDto = userService.loginUser(userLoginDto);
         return userDto.isEmailVerified()
             ? ok(userDto)
