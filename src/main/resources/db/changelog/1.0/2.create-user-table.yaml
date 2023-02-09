@@ -1,11 +1,11 @@
 databaseChangeLog:
   - changeSet:
       id: create-user
-      author: Yulia Nekhaichyk
+      author: Yulia Nexai
       changes:
-        - createTable: 
+        - createTable:
             tableName: users
-            columns: 
+            columns:
               - column:
                   name: id
                   type: bigint
@@ -18,38 +18,29 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     nullable: false
-	      - column:
+              - column:
                   name: password
                   type: varchar(60)
                   constraints:
                     nullable: false
-	      - column:
+              - column:
                   name: email
                   type: varchar(70)
                   constraints:
- 		    unique: true
+                    unique: true
                     nullable: false
-  	      - column:
+              - column:
                   name: confirmed
                   type: boolean
                   constraints:
- 		    unique: true
+                    unique: true
                     nullable: false
-	      - column:
+              - column:
                   name: created_at
                   type: timestamp without time zone
- 	      - column:
+              - column:
                   name: time_of_sending_the_confirmation_link
                   type: timestamp without time zone
               - column:
                   name: activation_code
                   type: varchar(50)
-
-              - addForeignKeyConstraint:
-            baseTableName: users
-            baseColumnNames: role_id
-            referencedTableName: role
-            referencedColumnNames: id
-            constraintName: users_roles_fk
-                  
-                 

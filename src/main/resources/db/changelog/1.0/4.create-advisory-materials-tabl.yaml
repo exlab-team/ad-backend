@@ -1,11 +1,11 @@
 databaseChangeLog:
   - changeSet:
-      id: create-social-networks
-      author: Yulia Nekhaichyk
+      id: create-advisory-material
+      author: Yulia Nexai
       changes:
-        - createTable: 
-            tableName: social_networks
-            columns: 
+        - createTable:
+            tableName: advisory_materials
+            columns:
               - column:
                   name: id
                   type: bigint
@@ -14,11 +14,12 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: name
-                  type: varchar(50)
+                  name: topic
+                  type: varchar(45)
                   constraints:
                     nullable: false
-	      - column:
-                  name: link
-                  type: varchar(150)
-                 
+              - column:
+                  name: content
+                  type: text
+                  constraints:
+                    nullable: false
