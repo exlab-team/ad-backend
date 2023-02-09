@@ -16,4 +16,11 @@ public class UserExceptionAdvice {
             HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IncorrectFieldException.class)
+    public  ResponseEntity<ExceptionDto> handleIncorrectFieldException(RuntimeException e){
+        return new ResponseEntity<>(
+            new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()),
+            HttpStatus.BAD_REQUEST);
+    }
+
 }
