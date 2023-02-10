@@ -139,11 +139,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteUserById(long id) {
-
-        return userAccountRepository.findByUserId(id)
+        /* удаляется теперь юзер и за собой тащит юзер аккаут
+           Причина: cascade типы теперь только в классе юзера
+        */
+        return userRepository.findById(id)
             .map(entity -> {
-                userAccountRepository.delete(entity);
-                userAccountRepository.flush();
+                userRepository.delete(entity);
+                userRepository.flush();
                 return true;
             })
             .orElse(false);

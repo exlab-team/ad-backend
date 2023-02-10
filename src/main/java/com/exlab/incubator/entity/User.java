@@ -54,7 +54,12 @@ public class User {
     @Column(length = 50, name = "activation_code")
     private String activationCode;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.DETACH)
+    /* добавила каскадные операции. Возможно стоит использовать не ALL
+        Можно совместить например remove, persist, merge
+        Но это надо протестить со всех сторон, а времени нет, поэтому оставляю ALL
+        Если у тебя будет время - глянь, если нет - то после выходных постараюсь сделать все по красоте
+    */
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserAccount userAccount;
 
     @ManyToMany

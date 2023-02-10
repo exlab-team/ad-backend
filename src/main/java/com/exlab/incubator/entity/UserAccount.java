@@ -33,7 +33,8 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    // убрала каскадное удаление
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
