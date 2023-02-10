@@ -7,6 +7,8 @@ import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserDto;
 import com.exlab.incubator.entity.User;
 import com.exlab.incubator.entity.UserAccount;
+import com.exlab.incubator.exception.ActivationCodeException;
+import com.exlab.incubator.exception.EmailVerifiedException;
 import com.exlab.incubator.exception.FieldExistsException;
 import com.exlab.incubator.repository.RoleRepository;
 import com.exlab.incubator.repository.UserAccountRepository;
@@ -62,8 +64,12 @@ public class UserServiceImpl implements UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
+        if (!userDetails.isEmailVerified()) {
+            throw new EmailVerifiedException("Email doesn't verified");
+        }
+
         return new UserDto(jwt, userDetails.getId(), userDetails.getUsername(),
-            userDetails.getEmail(), userDetails.isEmailVerified());
+            userDetails.getEmail());
     }
 
     private Authentication getAuthentication(UserLoginDto userLoginDto) {
@@ -75,8 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long createUser(UserCreateDto userCreateDto) {
         if (userRepository.existsByUsername(userCreateDto.getUsername())) {
-            throw new FieldExistsException(
-                "Error: Username already exists");
+            throw new FieldExistsException("Error: Username already exists");
         }
 
         if (userRepository.existsByEmail(userCreateDto.getEmail())) {
@@ -117,11 +122,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean activateUserByCode(String activationCode) {
 
-        Optional<User> optionalUser = userRepository.findByActivationCode(activationCode);
-        if (optionalUser.isEmpty()) {
-            return false;
-        }
-        User user = optionalUser.get();
+        User user = userRepository.findByActivationCode(activationCode)
+            .orElseThrow(() -> new ActivationCodeException("Activation code is invalid"));
 
         if (user.isEmailVerified()) {
             return false;

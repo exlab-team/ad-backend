@@ -11,31 +11,43 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class UserExceptionAdvice {
 
-    @ExceptionHandler({FieldExistsException.class, UserNotFoundException.class})
-    public ResponseEntity<ExceptionDto> handleException(RuntimeException e) {
+    @ExceptionHandler({
+        FieldExistsException.class,
+        UserNotFoundException.class,
+        EmailVerifiedException.class,
+        ActivationCodeException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDto> handleApplicationException(RuntimeException e) {
         return new ResponseEntity<>(
-            new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()),
+            new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase()),
             HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionDto> parameterExceptionHandler(MethodArgumentNotValidException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDto> parameterExceptionHandler(
+        MethodArgumentNotValidException e) {
 
         BindingResult result = e.getBindingResult();
         if (result.hasErrors()) {
             for (FieldError error : result.getFieldErrors()) {
                 return new ResponseEntity<>(
-                    new ExceptionDto(error.getDefaultMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()),
+                    new ExceptionDto(error.getDefaultMessage(), HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase()),
                     HttpStatus.BAD_REQUEST);
             }
         }
 
         return new ResponseEntity<>(
-            new ExceptionDto("Argument validation failed", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()),
+            new ExceptionDto("Argument validation failed", HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase()),
             HttpStatus.BAD_REQUEST);
     }
 
