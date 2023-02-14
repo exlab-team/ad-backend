@@ -1,6 +1,7 @@
 package com.exlab.incubator.entity;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,15 +16,18 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -54,11 +58,6 @@ public class User {
     @Column(length = 50, name = "activation_code")
     private String activationCode;
 
-    /* добавила каскадные операции. Возможно стоит использовать не ALL
-        Можно совместить например remove, persist, merge
-        Но это надо протестить со всех сторон, а времени нет, поэтому оставляю ALL
-        Если у тебя будет время - глянь, если нет - то после выходных постараюсь сделать все по красоте
-    */
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserAccount userAccount;
 
@@ -68,5 +67,7 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    @Exclude
+    @Builder.Default
+    private Set<Role> roles = new HashSet<>();
 }

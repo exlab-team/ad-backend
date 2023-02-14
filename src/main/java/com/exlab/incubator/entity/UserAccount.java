@@ -1,8 +1,7 @@
 package com.exlab.incubator.entity;
 
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,14 +15,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString.Exclude;
 
 @Entity
 @Table(name = "user_accounts")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -33,7 +33,6 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    // убрала каскадное удаление
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -51,7 +50,9 @@ public class UserAccount {
         joinColumns = @JoinColumn(name = "user_account_id"),
         inverseJoinColumns = @JoinColumn(name = "social_network_id")
     )
-    private List<SocialNetwork> socialNetworks;
+    @Exclude
+    @Builder.Default
+    private List<SocialNetwork> socialNetworks = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -59,5 +60,7 @@ public class UserAccount {
         joinColumns = @JoinColumn(name = "user_account_id"),
         inverseJoinColumns = @JoinColumn(name = "advisory_material_id")
     )
-    private List<AdvisoryMaterial> advisoryMaterials;
+    @Exclude
+    @Builder.Default
+    private List<AdvisoryMaterial> advisoryMaterials = new ArrayList<>();
 }

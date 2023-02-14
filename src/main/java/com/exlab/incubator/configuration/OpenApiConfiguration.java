@@ -1,14 +1,13 @@
 package com.exlab.incubator.configuration;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-
+import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@OpenAPIDefinition(info = @Info(title = "Ad.Incubator API", version = "1.0", description = ""))
 @SecurityScheme(
     name = "Bearer Authentication",
     type = SecuritySchemeType.HTTP,
@@ -17,13 +16,4 @@ import org.springframework.context.annotation.Configuration;
 )
 public class OpenApiConfiguration {
 
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-            .info(
-                new Info()
-                    .title("Ad.Incubator Api")
-                    .version("1.0.0")
-            );
-    }
 }

@@ -1,37 +1,44 @@
 package com.exlab.incubator.exception;
 
 import com.exlab.incubator.dto.responses.ExceptionDto;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
-public class UserExceptionAdvice {
+public class ApplicationExceptionHandler {
 
-    @ExceptionHandler({
-        FieldExistsException.class,
-        UserNotFoundException.class,
-        EmailVerifiedException.class,
-        ActivationCodeException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ExceptionDto> handleApplicationException(RuntimeException e) {
+    @ExceptionHandler(FieldExistsException.class)
+    public ResponseEntity<ExceptionDto> handleApplicationException(FieldExistsException e) {
         return new ResponseEntity<>(
             new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase()),
             HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({
+        UserNotFoundException.class,
+        ActivationCodeException.class})
+    public ResponseEntity<ExceptionDto> handleNotFoundException(RuntimeException e) {
+        return new ResponseEntity<>(
+            new ExceptionDto(e.getMessage(), HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase()),
+            HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EmailVerifiedException.class)
+    public ResponseEntity<ExceptionDto> handleEmailVerifiedException(EmailVerifiedException e) {
+        return new ResponseEntity<>(
+            new ExceptionDto(e.getMessage(), HttpStatus.NOT_ACCEPTABLE.value(),
+                HttpStatus.NOT_ACCEPTABLE.getReasonPhrase()),
+            HttpStatus.NOT_ACCEPTABLE);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ExceptionDto> parameterExceptionHandler(
         MethodArgumentNotValidException e) {
 

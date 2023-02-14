@@ -18,21 +18,23 @@ import org.springframework.stereotype.Component;
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+        AuthenticationException authException) throws IOException, ServletException {
         log.error(authException.getMessage());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
         final Map<String, Object> body = fillBodyMap(request, authException);
         final ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), body);
     }
 
-    private Map<String, Object> fillBodyMap(HttpServletRequest request, AuthenticationException authException) {
+    private Map<String, Object> fillBodyMap(HttpServletRequest request,
+        AuthenticationException authException) {
         Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpServletResponse.SC_BAD_REQUEST);
-        body.put("error", "Bad Request");
-        body.put("message", "Incorrect login or password.");
+        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+        body.put("error", "Unauthorized");
+        body.put("message", authException.getMessage());
         body.put("path", request.getServletPath());
 
         return body;

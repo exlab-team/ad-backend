@@ -43,9 +43,9 @@ public class AuthController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserDto.class))
             }),
-        @ApiResponse(responseCode = "400", description = "Email doesn't verified",
+        @ApiResponse(responseCode = "406", description = "Email doesn't verified",
             content = @Content),
-        @ApiResponse(responseCode = "400", description = "Incorrect login or password.",
+        @ApiResponse(responseCode = "401", description = "If incorrect login or password.",
             content = @Content)})
     @PostMapping("/login")
     public ResponseEntity<UserDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
@@ -59,7 +59,7 @@ public class AuthController {
         @ApiResponse(
             responseCode = "200",
             description = "Successful activation"),
-        @ApiResponse(responseCode = "400", description = "Activation code is invalid",
+        @ApiResponse(responseCode = "404", description = "Activation code is invalid",
             content = @Content),
         @ApiResponse(responseCode = "400", description = "Email already verified",
             content = @Content)})

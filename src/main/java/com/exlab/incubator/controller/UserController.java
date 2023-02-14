@@ -8,7 +8,6 @@ import com.exlab.incubator.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,9 +36,9 @@ public class UserController {
 
     @Operation(summary = "User registry", description = "Create user and save in database")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Create user",
+        @ApiResponse(responseCode = "201", description = "Create user and return user's id",
             content = @Content),
-        @ApiResponse(responseCode = "400", description = "Error: Username already exists or Error: Email already exists",
+        @ApiResponse(responseCode = "400", description = "Error: Username already exists or Error: Email already exists or any validation errors",
             content = @Content)})
     @PostMapping
     public ResponseEntity<Long> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
@@ -51,11 +50,14 @@ public class UserController {
         @ApiResponse(responseCode = "204", description = "No content if user was deleted from database",
             content = @Content),
         @ApiResponse(responseCode = "404", description = "Not found if user wasn't found in database",
+            content = @Content),
+        @ApiResponse(responseCode = "401", description = "if user wasn't authorized",
             content = @Content)})
     @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable @Parameter(description = "user's id") long id) {
+    public ResponseEntity<?> deleteUser(
+        @PathVariable @Parameter(description = "user's id") long id) {
         return userService.deleteUserById(id)
             ? noContent().build()
             : notFound().build();

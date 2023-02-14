@@ -11,13 +11,11 @@ import com.exlab.incubator.exception.ActivationCodeException;
 import com.exlab.incubator.exception.EmailVerifiedException;
 import com.exlab.incubator.exception.FieldExistsException;
 import com.exlab.incubator.repository.RoleRepository;
-import com.exlab.incubator.repository.UserAccountRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.UserService;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,20 +37,17 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final RoleRepository roleRepository;
-    private final UserAccountRepository userAccountRepository;
     private final MailSender mailSender;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
         AuthenticationManager authenticationManager, JwtUtils jwtUtils,
-        RoleRepository roleRepository,
-        UserAccountRepository userAccountRepository, MailSender mailSender) {
+        RoleRepository roleRepository, MailSender mailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.roleRepository = roleRepository;
-        this.userAccountRepository = userAccountRepository;
         this.mailSender = mailSender;
     }
 
@@ -129,19 +124,17 @@ public class UserServiceImpl implements UserService {
             return false;
         } else {
             user.setEmailVerified(true);
-            userRepository.save(user);
-            userAccountRepository.save(UserAccount.builder()
+            UserAccount userAccount = UserAccount.builder()
                 .user(user)
-                .build());
+                .build();
+            user.setUserAccount(userAccount);
+            userRepository.save(user);
             return true;
         }
     }
 
     @Override
     public boolean deleteUserById(long id) {
-        /* удаляется теперь юзер и за собой тащит юзер аккаут
-           Причина: cascade типы теперь только в классе юзера
-        */
         return userRepository.findById(id)
             .map(entity -> {
                 userRepository.delete(entity);
