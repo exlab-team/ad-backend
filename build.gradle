@@ -37,15 +37,6 @@ dependencies {
 
     implementation 'org.liquibase:liquibase-core:4.19.0'
 
-
-}
-
-liquibase {
-    activities {
-        main {
-            changeLogFile "./changelog-master.xml"
-        }
-    }
 }
 
 tasks.named('test') {
