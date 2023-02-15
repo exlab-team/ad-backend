@@ -14,9 +14,9 @@ create table if not exists users (
   username varchar(50) not null,
   password varchar(60) not null,
   email varchar(70) not null unique,
-  confirmed boolean not null,
+  email_verified boolean not null,
   created_at timestamp,
-  time_of_sending_the_confirmation_link timestamp,
+  time_of_sending_verification_link timestamp,
   activation_code varchar(50),
   constraint users_pk primary key(id)
  );
@@ -26,8 +26,8 @@ create table if not exists users_roles (
  role_id bigint not null,
   user_id bigint not null,
 
-  constraint users_roles_fk_users FOREIGN KEY(user_id) REFERENCES users(id),
-  constraint users_roles_fk_roles FOREIGN KEY(role_id) REFERENCES roles(id)
+  constraint users_roles_fk_users foreign key(user_id) references users(id),
+  constraint users_roles_fk_roles foreign key(role_id) references roles(id)
  );
 
 -- changeset ynekhaichyk:4
@@ -53,6 +53,7 @@ create table if not exists card_data (
 create table if not exists personal_accounts (
   id bigint not null,
   account_number varchar(100) not null,
+  created_at timestamp,
   constraint personal_accounts_pk primary key(id)
  );
 
@@ -71,22 +72,22 @@ create table if not exists user_accounts (
   tariff varchar(30) not null,
   user_id bigint not null,
   constraint users_accounts_pk primary key(id),
-  constraint user_accounts_fk_users FOREIGN KEY (user_id) REFERENCES users(id),
-  constraint users_fk_user_accounts FOREIGN KEY (personal_account_id) REFERENCES personal_accounts(id)
+  constraint user_accounts_fk_users foreign key (user_id) references users(id),
+  constraint users_fk_user_accounts foreign key (personal_account_id) references personal_accounts(id)
  );
 
  -- changeset  ynekhaichyk:9
 create table if not exists user_accounts_social_networks (
  social_network_id bigint not null,
  user_account_id bigint not null,
- CONSTRAINT user_accounts_fk_social_networks FOREIGN KEY (user_account_id) REFERENCES user_accounts(id),
- CONSTRAINT social_networks_fk_user_accounts FOREIGN KEY (social_network_id) REFERENCES social_networks(id)
+ constraint user_accounts_fk_social_networks foreign key (user_account_id) references user_accounts(id),
+ constraint social_networks_fk_user_accounts foreign key (social_network_id) references social_networks(id)
  );
 
  -- changeset ynekhaichyk:10
 create table if not exists user_accounts_advisory_materials (
  advisory_material_id bigint not null,
  user_account_id bigint not null,
- CONSTRAINT user_accounts_fk_advisory_materials FOREIGN KEY (user_account_id) REFERENCES user_accounts(id),
- CONSTRAINT advisory_material_fk_user_accounts FOREIGN KEY (advisory_material_id) REFERENCES advisory_materials(id)
+ constraint user_accounts_fk_advisory_materials foreign key (user_account_id) references user_accounts(id),
+ constraint advisory_material_fk_user_accounts foreign key (advisory_material_id) references advisory_materials(id)
  );
