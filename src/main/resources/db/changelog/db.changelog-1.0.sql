@@ -2,7 +2,7 @@
 
 -- changeset ynekhaichyk:1
 create table if not exists roles (
-  id bigint not null,
+  id bigserial not null,
   role_name varchar(40) not null,
   constraint roles_pk primary key(id)
  );
@@ -10,7 +10,7 @@ create table if not exists roles (
 
 -- changeset ynekhaichyk:2
 create table if not exists users (
-  id bigint not null,
+  id bigserial not null,
   username varchar(50) not null,
   password varchar(60) not null,
   email varchar(70) not null unique,
@@ -32,7 +32,7 @@ create table if not exists users_roles (
 
 -- changeset ynekhaichyk:4
 create table if not exists advisory_materials (
-  id bigint not null,
+  id bigserial not null,
   topic varchar(45) not null,
   content text not null,
   constraint advisory_materials_pk primary key(id)
@@ -40,7 +40,7 @@ create table if not exists advisory_materials (
 
 -- changeset ynekhaichyk:5
 create table if not exists card_data (
-  id bigint not null,
+  id bigserial not null,
   card_number varchar(16) not null,
   card_owner varchar(30) not null,
   cvv_code int not null,
@@ -51,7 +51,7 @@ create table if not exists card_data (
 
 -- changeset ynekhaichyk:6
 create table if not exists personal_accounts (
-  id bigint not null,
+  id bigserial not null,
   account_number varchar(100) not null,
   created_at timestamp,
   constraint personal_accounts_pk primary key(id)
@@ -59,7 +59,7 @@ create table if not exists personal_accounts (
 
 -- changeset ynekhaichyk:7
 create table if not exists social_networks (
-  id bigint not null,
+  id bigserial not null,
   name varchar(50) not null,
   link varchar(150) not null,
   constraint social_networks_pk primary key(id)
@@ -67,7 +67,7 @@ create table if not exists social_networks (
 
 -- changeset ynekhaichyk:8
 create table if not exists user_accounts (
-  id bigint not null,
+  id bigserial not null,
   personal_account_id bigint not null,
   tariff varchar(30) not null,
   user_id bigint not null,
