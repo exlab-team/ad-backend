@@ -68,8 +68,8 @@ create table if not exists social_networks (
 -- changeset ynekhaichyk:8
 create table if not exists user_accounts (
   id bigserial not null,
-  personal_account_id bigint not null,
-  tariff varchar(30) not null,
+  personal_account_id bigint,
+  tariff varchar(30),
   user_id bigint not null,
   constraint users_accounts_pk primary key(id),
   constraint user_accounts_fk_users foreign key (user_id) references users(id),
