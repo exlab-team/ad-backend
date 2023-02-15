@@ -4,6 +4,9 @@ import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
 
 import com.exlab.incubator.dto.requests.UserCreateDto;
+import com.exlab.incubator.entity.Role;
+import com.exlab.incubator.entity.RoleName;
+import com.exlab.incubator.service.RoleService;
 import com.exlab.incubator.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,10 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     @Operation(summary = "User registry", description = "Create user and save in database")
@@ -42,7 +47,8 @@ public class UserController {
             content = @Content)})
     @PostMapping
     public ResponseEntity<Long> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        return new ResponseEntity<>(userService.createUser(userCreateDto), HttpStatus.CREATED);
+        Role role = roleService.createRoleIfNotExist(RoleName.USER);
+        return new ResponseEntity<>(userService.createUser(userCreateDto, role), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Delete user", description = "Delete user from database")

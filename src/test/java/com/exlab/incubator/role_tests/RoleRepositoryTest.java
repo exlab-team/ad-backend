@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 import com.exlab.incubator.entity.Role;
+import com.exlab.incubator.entity.RoleName;
 import com.exlab.incubator.repository.RoleRepository;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,8 @@ public class RoleRepositoryTest {
     @Test
     public void testCreateRoles(){
 
-        Role user = Role.builder().name("ROLE_USER").build();
-        Role admin = Role.builder().name("ROLE_ADMIN").build();
+        Role user = Role.builder().roleName(RoleName.USER).build();
+        Role admin = Role.builder().roleName(RoleName.ADMIN).build();
 
         roleRepository.save(user);
         roleRepository.save(admin);

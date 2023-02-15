@@ -5,6 +5,7 @@ import com.exlab.incubator.configuration.user_details.UserDetailsImpl;
 import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserDto;
+import com.exlab.incubator.entity.Role;
 import com.exlab.incubator.entity.User;
 import com.exlab.incubator.entity.UserAccount;
 import com.exlab.incubator.exception.ActivationCodeException;
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long createUser(UserCreateDto userCreateDto) {
+    public Long createUser(UserCreateDto userCreateDto, Role role) {
         if (userRepository.existsByUsername(userCreateDto.getUsername())) {
             throw new FieldExistsException("Error: Username already exists");
         }
@@ -83,17 +84,17 @@ public class UserServiceImpl implements UserService {
             throw new FieldExistsException("Error: Email already exists");
         }
 
-        return createAndSaveUser(userCreateDto);
+        return createAndSaveUser(userCreateDto, role);
     }
 
-    private Long createAndSaveUser(UserCreateDto userCreateDto) {
+    private Long createAndSaveUser(UserCreateDto userCreateDto, Role role) {
         User user = User.builder()
             .username(userCreateDto.getUsername())
             .password(passwordEncoder.encode(userCreateDto.getPassword()))
             .email(userCreateDto.getEmail())
             .emailVerified(false)
             .createdAt(Instant.now())
-            .roles(Set.of(roleRepository.findById(1).get()))
+            .roles(Set.of(role))
             .build();
 
         User savedUser = getUserWithTheNewActivationCode(user);
