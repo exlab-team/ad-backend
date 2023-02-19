@@ -11,6 +11,7 @@ import com.exlab.incubator.entity.UserAccount;
 import com.exlab.incubator.exception.ActivationCodeException;
 import com.exlab.incubator.exception.EmailVerifiedException;
 import com.exlab.incubator.exception.FieldExistsException;
+import com.exlab.incubator.exception.UserNotFoundException;
 import com.exlab.incubator.repository.RoleRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
@@ -61,6 +62,14 @@ public class UserServiceImpl implements UserService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         if (!userDetails.isEmailVerified()) {
+            System.out.println(">>>   Login User");
+            long currentTime = Instant.now().toEpochMilli();
+            User user = userRepository
+                .findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+            if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli()) >= 300000) {
+                userRepository.delete(user);
+            }
             throw new EmailVerifiedException("Email doesn't verified");
         }
 
@@ -76,13 +85,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long createUser(UserCreateDto userCreateDto, Role role) {
-        if (userRepository.existsByUsername(userCreateDto.getUsername())) {
-            throw new FieldExistsException("Error: Username already exists");
+
+        System.out.println("err1");
+
+        boolean usernameExists = userRepository.existsByUsername(userCreateDto.getUsername());
+        System.out.println("err2");
+        boolean emailExists = userRepository.existsByEmail(userCreateDto.getEmail());
+        System.out.println("err3");
+
+        if (usernameExists && emailExists){
+            System.out.println(">>>   Create User 1");
+            User user = userRepository.findByUsername(userCreateDto.getUsername()).get();
+            if (!user.isEmailVerified()) {
+                long currentTime = Instant.now().toEpochMilli();
+                if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli())
+                    >= 300000) {
+                    userRepository.delete(user);
+                }
+            }
         }
 
-        if (userRepository.existsByEmail(userCreateDto.getEmail())) {
+        if (usernameExists) {
+            System.out.println(">>>   Create User 2");
+            throw new FieldExistsException("Error: Username already exists");
+        } else if (emailExists) {
+            System.out.println(">>>   Create User 3");
             throw new FieldExistsException("Error: Email already exists");
         }
+
 
         return createAndSaveUser(userCreateDto, role);
     }
@@ -145,17 +175,17 @@ public class UserServiceImpl implements UserService {
             .orElse(false);
     }
 
-    @Scheduled(fixedDelay = 30000)
-    private void deletingUsersWithAnOutdatedLink() {
-        long currentTime = Instant.now().toEpochMilli();
-        List<User> users = userRepository.findAll().stream()
-            .filter((user) -> !user.isEmailVerified())
-            .toList();
-
-        users.forEach(user -> {
-            if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli()) >= 300000) {
-                userRepository.delete(user);
-            }
-        });
-    }
+//    @Scheduled(fixedDelay = (60000 * 60 * 24))
+//    private void deletingUsersWithAnOutdatedLink() {
+//        long currentTime = Instant.now().toEpochMilli();
+//        List<User> users = userRepository.findAll().stream()
+//            .filter((user) -> !user.isEmailVerified())
+//            .toList();
+//
+//        users.forEach(user -> {
+//            if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli()) >= 300000) {
+//                userRepository.delete(user);
+//            }
+//        });
+//    }
 }
