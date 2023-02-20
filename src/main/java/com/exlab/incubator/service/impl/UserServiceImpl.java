@@ -61,16 +61,7 @@ public class UserServiceImpl implements UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        //проверка на удаление
         if (!userDetails.isEmailVerified()) {
-            System.out.println(">>>   Login User");
-            long currentTime = Instant.now().toEpochMilli();
-            User user = userRepository
-                .findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-            if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli()) >= 300000) {
-                userRepository.delete(user);
-            }
             throw new EmailVerifiedException("Email doesn't verified");
         }
 
@@ -87,30 +78,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long createUser(UserCreateDto userCreateDto, Role role) {
 
-        boolean usernameExists = userRepository.existsByUsername(userCreateDto.getUsername());
-        boolean emailExists = userRepository.existsByEmail(userCreateDto.getEmail());
+        checkingForNecessityForDeletingAUser(userCreateDto,
+            userRepository.existsByUsername(userCreateDto.getUsername()),
+            userRepository.existsByEmail(userCreateDto.getEmail()));
 
-        if (usernameExists && emailExists){
-            System.out.println(">>>   Create User 1");
-            User user = userRepository.findByUsername(userCreateDto.getUsername()).get();
-            if (!user.isEmailVerified()) {
-                long currentTime = Instant.now().toEpochMilli();
-                if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli())
-                    >= 300000) {
-                    userRepository.delete(user);
-                }
-            }
-        } else if (usernameExists) {
-            System.out.println(">>>   Create User 2");
+        if (userRepository.existsByUsername(userCreateDto.getUsername())) {
             throw new FieldExistsException("Error: Username already exists");
-        } else if (emailExists) {
-            System.out.println(">>>   Create User 3");
+        } else if (userRepository.existsByEmail(userCreateDto.getEmail())) {
             throw new FieldExistsException("Error: Email already exists");
         }
 
-
         return createAndSaveUser(userCreateDto, role);
     }
+
 
     private Long createAndSaveUser(UserCreateDto userCreateDto, Role role) {
         User user = User.builder()
@@ -170,17 +150,34 @@ public class UserServiceImpl implements UserService {
             .orElse(false);
     }
 
-//    @Scheduled(fixedDelay = (60000 * 60 * 24))
-//    private void deletingUsersWithAnOutdatedLink() {
-//        long currentTime = Instant.now().toEpochMilli();
-//        List<User> users = userRepository.findAll().stream()
-//            .filter((user) -> !user.isEmailVerified())
-//            .toList();
-//
-//        users.forEach(user -> {
-//            if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli()) >= 300000) {
-//                userRepository.delete(user);
-//            }
-//        });
-//    }
+    private void checkingForNecessityForDeletingAUser(UserCreateDto userCreateDto, Boolean existsByUsername, Boolean existsByEmail) {
+        if (existsByUsername && existsByEmail) {
+            User user = userRepository.findByUsername(userCreateDto.getUsername()).get();
+            if (!user.isEmailVerified()) {
+                checkingTimeToDeleteAUser(user);
+            }
+        }
+    }
+
+    private void checkingTimeToDeleteAUser(User user) {
+        long currentTime = Instant.now().toEpochMilli();
+        if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli())
+            >= 300000) {
+            userRepository.delete(user);
+        }
+    }
+
+    @Scheduled(fixedDelay = (60000 * 60 * 24))
+    private void deletingUsersWithAnOutdatedLink() {
+        long currentTime = Instant.now().toEpochMilli();
+        List<User> users = userRepository.findAll().stream()
+            .filter((user) -> !user.isEmailVerified())
+            .toList();
+
+        users.forEach(user -> {
+            if ((currentTime - user.getTimeOfSendingVerificationLink().toEpochMilli()) >= 300000) {
+                userRepository.delete(user);
+            }
+        });
+    }
 }
