@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
+        //проверка на удаление
         if (!userDetails.isEmailVerified()) {
             System.out.println(">>>   Login User");
             long currentTime = Instant.now().toEpochMilli();
@@ -86,12 +87,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long createUser(UserCreateDto userCreateDto, Role role) {
 
-        System.out.println("err1");
-
         boolean usernameExists = userRepository.existsByUsername(userCreateDto.getUsername());
-        System.out.println("err2");
         boolean emailExists = userRepository.existsByEmail(userCreateDto.getEmail());
-        System.out.println("err3");
 
         if (usernameExists && emailExists){
             System.out.println(">>>   Create User 1");
@@ -103,9 +100,7 @@ public class UserServiceImpl implements UserService {
                     userRepository.delete(user);
                 }
             }
-        }
-
-        if (usernameExists) {
+        } else if (usernameExists) {
             System.out.println(">>>   Create User 2");
             throw new FieldExistsException("Error: Username already exists");
         } else if (emailExists) {
