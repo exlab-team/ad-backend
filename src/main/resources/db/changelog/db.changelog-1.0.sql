@@ -11,9 +11,9 @@ create table if not exists roles (
 -- changeset ynekhaichyk:2
 create table if not exists users (
   id bigserial not null,
-  username varchar(50) not null,
+  username varchar(50) not null unique,
   password varchar(60) not null,
-  email varchar(70) not null unique,
+  email varchar(255) not null unique,
   email_verified boolean not null,
   created_at timestamp,
   time_of_sending_verification_link timestamp,
