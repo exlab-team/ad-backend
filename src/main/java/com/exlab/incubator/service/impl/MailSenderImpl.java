@@ -2,12 +2,15 @@ package com.exlab.incubator.service.impl;
 
 
 import com.exlab.incubator.service.MailSender;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,16 +24,15 @@ public class MailSenderImpl implements MailSender {
 
     @Override
     public void send(String emailTo, String subject, String message) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-        mailMessage.setFrom(username);
-        mailMessage.setTo(emailTo);
-        mailMessage.setSubject(subject);
-        mailMessage.setText(message);
-
         try {
-            mailSender.send(mailMessage);
-        } catch (MailSendException e){
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+            helper.setText(message, true);
+            helper.setTo(emailTo);
+            helper.setSubject(subject);
+            helper.setFrom(username);
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
             log.error(e.getMessage());
         }
     }
