@@ -2,7 +2,7 @@
 
 -- changeset ynekhaichyk:1
 create table if not exists roles (
-  id bigserial not null,
+  id serial not null,
   role_name varchar(40) not null,
   constraint roles_pk primary key(id)
  );
@@ -23,7 +23,7 @@ create table if not exists users (
 
  -- changeset ynekhaichyk:3
 create table if not exists users_roles (
- role_id bigint not null,
+ role_id int not null,
   user_id bigint not null,
 
   constraint users_roles_fk_users foreign key(user_id) references users(id),
@@ -68,11 +68,11 @@ create table if not exists social_networks (
 -- changeset ynekhaichyk:8
 create table if not exists user_accounts (
   id bigserial not null,
-  personal_account_id bigint,
-  tariff varchar(30),
   user_id bigint not null,
+  personal_account_id bigint,
+  modified_at timestamp,
   constraint users_accounts_pk primary key(id),
-  constraint user_accounts_fk_users foreign key (user_id) references users(id),
+  constraint user_accounts_fk_users foreign key (user_id) references users(id) on delete cascade,
   constraint users_fk_user_accounts foreign key (personal_account_id) references personal_accounts(id)
  );
 
