@@ -13,6 +13,5 @@ public class UserAccountReadDto {
     String username;
     String email;
     String personalAccount;
-    String tariffName;
 
 }
