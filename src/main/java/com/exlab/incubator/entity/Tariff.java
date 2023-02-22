@@ -31,4 +31,5 @@ public class Tariff {
     @Column
     private Double price;
 
+
 }

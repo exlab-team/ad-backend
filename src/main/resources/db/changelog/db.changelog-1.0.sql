@@ -65,6 +65,7 @@ create table if not exists user_accounts (
   modified_at timestamp,
   constraint users_accounts_pk primary key(id),
   constraint user_accounts_fk_users foreign key (user_id) references users(id) on delete cascade
+
  );
 
  -- changeset  ynekhaichyk:8
