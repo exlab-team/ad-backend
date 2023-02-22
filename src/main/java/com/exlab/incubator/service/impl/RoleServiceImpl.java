@@ -26,11 +26,11 @@ public class RoleServiceImpl implements RoleService {
     public Role createRoleIfNotExist(RoleName roleName) {
         Optional<Role> optRole = repository.findByRoleName(roleName);
 
-        if (optRole.isPresent()){
-            return optRole.get();
-        } else {
-            return repository.save(Role.builder().roleName(roleName).build());
-        }
+        return repository.findByRoleName(roleName).orElseGet(
+            () -> repository.save(
+                Role.builder()
+                    .roleName(roleName)
+                    .build()));
     }
 
 }
