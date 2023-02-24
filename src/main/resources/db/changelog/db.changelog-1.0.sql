@@ -3,7 +3,7 @@
 -- changeset ynekhaichyk:1
 create table if not exists roles (
   id serial not null,
-  role_name varchar(40) not null,
+  role_name varchar(40) not null unique,
   constraint roles_pk primary key(id)
  );
 
@@ -50,14 +50,6 @@ create table if not exists card_data (
  );
 
 -- changeset ynekhaichyk:6
-create table if not exists personal_accounts (
-  id bigserial not null,
-  account_number varchar(100) not null,
-  created_at timestamp,
-  constraint personal_accounts_pk primary key(id)
- );
-
--- changeset ynekhaichyk:7
 create table if not exists social_networks (
   id bigserial not null,
   name varchar(50) not null,
@@ -65,18 +57,17 @@ create table if not exists social_networks (
   constraint social_networks_pk primary key(id)
  );
 
--- changeset ynekhaichyk:8
+-- changeset ynekhaichyk:7
 create table if not exists user_accounts (
   id bigserial not null,
   user_id bigint not null,
-  personal_account_id bigint,
+  personal_account varchar(100) unique,
   modified_at timestamp,
   constraint users_accounts_pk primary key(id),
-  constraint user_accounts_fk_users foreign key (user_id) references users(id) on delete cascade,
-  constraint users_fk_user_accounts foreign key (personal_account_id) references personal_accounts(id)
+  constraint user_accounts_fk_users foreign key (user_id) references users(id) on delete cascade
  );
 
- -- changeset  ynekhaichyk:9
+ -- changeset  ynekhaichyk:8
 create table if not exists user_accounts_social_networks (
  social_network_id bigint not null,
  user_account_id bigint not null,
@@ -84,7 +75,7 @@ create table if not exists user_accounts_social_networks (
  constraint social_networks_fk_user_accounts foreign key (social_network_id) references social_networks(id)
  );
 
- -- changeset ynekhaichyk:10
+ -- changeset ynekhaichyk:9
 create table if not exists user_accounts_advisory_materials (
  advisory_material_id bigint not null,
  user_account_id bigint not null,
