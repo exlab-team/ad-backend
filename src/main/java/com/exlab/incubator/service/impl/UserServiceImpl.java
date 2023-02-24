@@ -34,9 +34,9 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final UserAccountRepository userAccountRepository;
     private final JwtUtils jwtUtils;
     private final MailSender mailSender;
 
