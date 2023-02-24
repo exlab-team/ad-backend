@@ -1,6 +1,7 @@
 package com.exlab.incubator.controller;
 
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.status;
 
 import com.exlab.incubator.dto.requests.TariffDto;
 import com.exlab.incubator.entity.Tariff;
