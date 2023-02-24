@@ -1,6 +1,5 @@
 package com.exlab.incubator.service;
 
-import com.exlab.incubator.dto.requests.TariffDto;
 import com.exlab.incubator.entity.Tariff;
 
 public interface UserAccountService {
@@ -8,6 +7,5 @@ public interface UserAccountService {
     boolean establishTariffToUser(Long account_id, Tariff tariff);
 
     long activateUserAccountByCode(String activationCode);
-
 }
 

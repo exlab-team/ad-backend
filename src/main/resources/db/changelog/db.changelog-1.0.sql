@@ -65,7 +65,10 @@ create table if not exists user_accounts (
   modified_at timestamp,
   constraint users_accounts_pk primary key(id),
   constraint user_accounts_fk_users foreign key (user_id) references users(id) on delete cascade
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9f0ea36 (Delete PersonalAccount.class. Replace method activateByCode in UserAccountController. Changed return value in method login from UserDto to UserAccountDto)
  );
 
  -- changeset  ynekhaichyk:8
