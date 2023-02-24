@@ -1,10 +1,11 @@
 package com.exlab.incubator.controller;
 
-import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
 import com.exlab.incubator.dto.requests.UserLoginDto;
-import com.exlab.incubator.dto.responses.UserDto;
+import com.exlab.incubator.dto.responses.UserAccountReadDto;
+import com.exlab.incubator.dto.responses.UserReadDto;
+import com.exlab.incubator.service.UserAccountService;
 import com.exlab.incubator.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,10 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final UserAccountService userAccountService;
 
     @Autowired
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, UserAccountService userAccountService) {
         this.userService = userService;
+        this.userAccountService = userAccountService;
     }
 
     @Operation(summary = "User login")
@@ -41,33 +44,36 @@ public class AuthController {
             content = {
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = UserDto.class))
+                    schema = @Schema(implementation = UserAccountReadDto.class))
             }),
         @ApiResponse(responseCode = "406", description = "Email doesn't verified",
             content = @Content),
         @ApiResponse(responseCode = "401", description = "If incorrect login or password.",
             content = @Content)})
     @PostMapping("/login")
-    public ResponseEntity<UserDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
-        UserDto userDto = userService.loginUser(userLoginDto);
-        return ok(userDto);
+    public ResponseEntity<UserAccountReadDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto) {
+        UserAccountReadDto userAccountReadDto = userService.loginUser(userLoginDto);
+        return ok(userAccountReadDto);
 
     }
 
-    @Operation(summary = "Activate email by code")
+    @Operation(summary = "Activate email by code and create account")
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Successful activation"),
+            description = "Successful activation",
+            content = {
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserAccountReadDto.class))
+            }),
         @ApiResponse(responseCode = "404", description = "Activation code is invalid",
             content = @Content),
-        @ApiResponse(responseCode = "400", description = "Email already verified",
+        @ApiResponse(responseCode = "400", description = "Account has already activated",
             content = @Content)})
     @GetMapping("/{activationCode}")
-    public ResponseEntity<?> activateUserAccount(@PathVariable
+    public ResponseEntity<Long> activateUserAccount(@PathVariable
     @Parameter(description = "Activation code from email link") String activationCode) {
-        return userService.activateUserByCode(activationCode)
-            ? ok().build()
-            : badRequest().body("Email already verified");
+        return ok(userAccountService.activateUserAccountByCode(activationCode));
     }
 }

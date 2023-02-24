@@ -68,5 +68,4 @@ public class UserController {
             ? noContent().build()
             : notFound().build();
     }
-
 }

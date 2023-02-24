@@ -3,8 +3,10 @@ package com.exlab.incubator.service.impl;
 import com.exlab.incubator.dto.requests.TariffDto;
 import com.exlab.incubator.entity.Tariff;
 import com.exlab.incubator.entity.TariffName;
+import com.exlab.incubator.exception.TariffNameException;
 import com.exlab.incubator.repository.TariffRepository;
 import com.exlab.incubator.service.TariffService;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,11 @@ public class TariffServiceImpl implements TariffService {
 
     @Override
     public Tariff createTariffIfNotExist(TariffDto tariff) {
-        TariffName tariffName = TariffName.valueOf(tariff.getName().toUpperCase());
+        TariffName tariffName = TariffName.of(tariff.getName());
+
+        if (Objects.isNull(tariffName)){
+            throw new TariffNameException("No such tariff name");
+        }
         return repository.findByTariffName(tariffName)
             .orElseGet(() -> repository.save(
                 Tariff.builder()

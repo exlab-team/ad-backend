@@ -24,8 +24,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role createRoleIfNotExist(RoleName roleName) {
-        Optional<Role> optRole = repository.findByRoleName(roleName);
-
         return repository.findByRoleName(roleName).orElseGet(
             () -> repository.save(
                 Role.builder()

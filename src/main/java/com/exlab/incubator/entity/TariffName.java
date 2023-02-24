@@ -4,5 +4,13 @@ public enum TariffName {
 
     START,
     MIDDLE,
-    PRO
+    PRO;
+
+    public static TariffName of(String str) {
+        for (TariffName tariff : TariffName.values()) {
+            if (tariff.name().equalsIgnoreCase(str))
+                return tariff;
+        }
+        return null;
+    }
 }

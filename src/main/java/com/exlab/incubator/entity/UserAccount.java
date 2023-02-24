@@ -33,7 +33,7 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -41,9 +41,8 @@ public class UserAccount {
     @JoinColumn(name = "tariff_id", referencedColumnName = "id")
     private Tariff tariff;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "personal_account_id", referencedColumnName = "id")
-    private PersonalAccount personalAccount;
+    @Column(length = 100)
+    private String personalAccount;
 
     @Column(name = "modified_at")
     private Instant modifiedAt;
