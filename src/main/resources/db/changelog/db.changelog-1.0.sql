@@ -23,7 +23,7 @@ create table if not exists users (
 
  -- changeset ynekhaichyk:3
 create table if not exists users_roles (
- role_id int not null,
+  role_id int not null,
   user_id bigint not null,
 
   constraint users_roles_fk_users foreign key(user_id) references users(id),

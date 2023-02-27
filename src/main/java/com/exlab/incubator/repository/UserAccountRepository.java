@@ -1,7 +1,6 @@
 package com.exlab.incubator.repository;
 
 import com.exlab.incubator.entity.UserAccount;
-import com.fasterxml.jackson.annotation.OptBoolean;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

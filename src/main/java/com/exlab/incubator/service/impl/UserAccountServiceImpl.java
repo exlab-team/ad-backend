@@ -29,8 +29,6 @@ public class UserAccountServiceImpl implements UserAccountService {
         this.userRepository = userRepository;
     }
 
-    @Override
-    @Transactional
     public boolean establishTariffToUser(Long account_id, Tariff tariff) {
         Integer result = userAccountRepository.findById(account_id)
             .map(account -> {
@@ -38,7 +36,8 @@ public class UserAccountServiceImpl implements UserAccountService {
                 account.setPersonalAccount(UUID.randomUUID().toString());
                 account.setModifiedAt(Instant.now());
                 return userAccountRepository.updateWithTariff(account);
-            }).orElseThrow(() -> new UserAccountNotFoundException("User account doesn't exist"));
+            })
+            .orElseThrow(() -> new UserAccountNotFoundException("User account doesn't exist"));
         return result > 0;
     }
 
@@ -46,7 +45,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Transactional
     public long activateUserAccountByCode(String activationCode) {
         User user = userRepository.findByActivationCode(activationCode)
-            .orElseThrow(() -> new ActivationCodeNotFoundException("Activation code is invalid"));
+            .orElseThrow(
+                () -> new ActivationCodeNotFoundException("Activation code is invalid"));
 
         if (user.isEmailVerified()) {
             throw new ActivationCodeException("Account has already activated");

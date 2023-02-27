@@ -9,8 +9,10 @@ import com.exlab.incubator.service.TariffService;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class TariffServiceImpl implements TariffService {
 
     private final TariffRepository repository;
@@ -21,10 +23,11 @@ public class TariffServiceImpl implements TariffService {
     }
 
     @Override
+    @Transactional
     public Tariff createTariffIfNotExist(TariffDto tariff) {
         TariffName tariffName = TariffName.of(tariff.getName());
 
-        if (Objects.isNull(tariffName)){
+        if (Objects.isNull(tariffName)) {
             throw new TariffNameException("No such tariff name");
         }
         return repository.findByTariffName(tariffName)
