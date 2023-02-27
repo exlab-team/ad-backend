@@ -29,6 +29,8 @@ public class UserAccountServiceImpl implements UserAccountService {
         this.userRepository = userRepository;
     }
 
+    @Override
+    @Transactional
     public boolean establishTariffToUser(Long account_id, Tariff tariff) {
         Integer result = userAccountRepository.findById(account_id)
             .map(account -> {
