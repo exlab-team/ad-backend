@@ -75,7 +75,6 @@ public class UserServiceImpl implements UserService {
             .username(userDetails.getUsername())
             .email(userDetails.getEmail())
             .personalAccount(userAccount.getPersonalAccount())
-            .tariffName(userAccount.getTariff().getTariffName().name())
             .build();
     }
 

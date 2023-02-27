@@ -8,9 +8,7 @@ import com.exlab.incubator.entity.Role;
 public interface UserService {
 
     UserAccountReadDto loginUser(UserLoginDto userLoginDto);
-
     Long createUser(UserCreateDto userCreateDto, Role role);
-
     boolean deleteUserById(long id);
 
 }
