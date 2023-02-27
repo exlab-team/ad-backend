@@ -4,13 +4,11 @@ import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.exlab.incubator.dto.requests.TariffDto;
-import com.exlab.incubator.dto.responses.UserAccountReadDto;
 import com.exlab.incubator.entity.Tariff;
 import com.exlab.incubator.service.TariffService;
 import com.exlab.incubator.service.UserAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
