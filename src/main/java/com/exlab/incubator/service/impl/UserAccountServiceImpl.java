@@ -1,13 +1,11 @@
 package com.exlab.incubator.service.impl;
 
-import com.exlab.incubator.dto.responses.UserAccountReadDto;
 import com.exlab.incubator.entity.Tariff;
 import com.exlab.incubator.entity.User;
 import com.exlab.incubator.entity.UserAccount;
 import com.exlab.incubator.exception.ActivationCodeException;
 import com.exlab.incubator.exception.ActivationCodeNotFoundException;
 import com.exlab.incubator.exception.UserAccountNotFoundException;
-import com.exlab.incubator.exception.UserNotFoundException;
 import com.exlab.incubator.repository.UserAccountRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.UserAccountService;
@@ -61,5 +59,4 @@ public class UserAccountServiceImpl implements UserAccountService {
             return userAccountRepository.save(userAccount).getId();
         }
     }
-
 }
