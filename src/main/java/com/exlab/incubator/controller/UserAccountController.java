@@ -30,6 +30,7 @@ public class UserAccountController {
     private final TariffService tariffService;
 
     @Autowired
+
     public UserAccountController(UserAccountService userAccountService,
         TariffService tariffService) {
         this.userAccountService = userAccountService;
@@ -57,5 +58,4 @@ public class UserAccountController {
             ? ok().build()
             : status(HttpStatus.NOT_MODIFIED).build();
     }
-
 }
