@@ -2,14 +2,9 @@ package com.exlab.incubator.service.impl;
 
 import com.exlab.incubator.entity.Role;
 import com.exlab.incubator.entity.RoleName;
-import com.exlab.incubator.entity.User;
 import com.exlab.incubator.repository.RoleRepository;
 import com.exlab.incubator.service.RoleService;
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,13 +19,11 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role createRoleIfNotExist(RoleName roleName) {
-        Optional<Role> optRole = repository.findByRoleName(roleName);
-
-        if (optRole.isPresent()){
-            return optRole.get();
-        } else {
-            return repository.save(Role.builder().roleName(roleName).build());
-        }
+        return repository.findByRoleName(roleName).orElseGet(
+            () -> repository.save(
+                Role.builder()
+                    .roleName(roleName)
+                    .build()));
     }
 
 }

@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
 
-    @ExceptionHandler(FieldExistsException.class)
-    public ResponseEntity<ExceptionDto> handleApplicationException(FieldExistsException e) {
+    @ExceptionHandler({
+        FieldExistsException.class,
+        ActivationCodeException.class,
+        TariffNameException.class})
+    public ResponseEntity<ExceptionDto> handleApplicationException(RuntimeException e) {
         return new ResponseEntity<>(
             new ExceptionDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase()),
@@ -21,8 +24,9 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler({
+        ActivationCodeNotFoundException.class,
         UserNotFoundException.class,
-        ActivationCodeException.class})
+        UserAccountNotFoundException.class})
     public ResponseEntity<ExceptionDto> handleNotFoundException(RuntimeException e) {
         return new ResponseEntity<>(
             new ExceptionDto(e.getMessage(), HttpStatus.NOT_FOUND.value(),
