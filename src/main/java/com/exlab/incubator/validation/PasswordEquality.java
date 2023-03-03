@@ -25,9 +25,10 @@ public @interface PasswordEquality {
 
     Class<? extends Payload>[] payload() default {};
 
-    String field();
+    String originalField();
 
-    String equalsTo();
+    String confirmField();
+
 
     @Target(TYPE)
     @Retention(RUNTIME)

@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import lombok.Value;
 
 @Value
-@PasswordEquality(field = "password", equalsTo = "confirmPassword")
+@PasswordEquality(originalField = "password", confirmField = "confirmPassword")
 public class UserCreateDto {
 
     @NotBlank

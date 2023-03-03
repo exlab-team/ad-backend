@@ -8,22 +8,28 @@ import org.springframework.beans.BeanWrapperImpl;
 
 public class PasswordEqualityValidator implements ConstraintValidator<PasswordEquality, Object> {
 
-    private String field;
-    private String equalsTo;
+    private String originalField;
+    private String confirmField;
+    private String message;
 
     public void initialize(PasswordEquality constraintAnnotation) {
-        this.field = constraintAnnotation.field();
-        this.equalsTo = constraintAnnotation.equalsTo();
+        this.originalField = constraintAnnotation.originalField();
+        this.confirmField = constraintAnnotation.confirmField();
+        this.message = constraintAnnotation.message();
     }
 
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        Object password = new BeanWrapperImpl(value).getPropertyValue(field);
-        Object confirmPassword = new BeanWrapperImpl(value).getPropertyValue(equalsTo);
+        Object passwordValue = new BeanWrapperImpl(value).getPropertyValue(originalField);
+        Object confirmPassword = new BeanWrapperImpl(value).getPropertyValue(confirmField);
 
-        if (password != null) {
-            return password.equals(confirmPassword);
-        } else {
-            return confirmPassword == null;
+        boolean isValid = passwordValue != null && passwordValue.equals(confirmPassword);
+        if (!isValid) {
+            context.disableDefaultConstraintViolation();
+            context
+                .buildConstraintViolationWithTemplate(message)
+                .addPropertyNode(confirmField)
+                .addConstraintViolation();
         }
+        return isValid;
     }
 }
