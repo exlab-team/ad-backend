@@ -121,10 +121,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private void sendingAnEmailMessageForEmailVerification(User user) {
-        String link = String.format("http://5.101.51.87:8088/api/v1/auth/%s",
-            user.getActivationCode());
-        mailSender.send(user.getEmail(), "Account activation",
-            buildEmail(user.getUsername(), link));
+        String link = String.format("http://localhost:8088/api/v1/auth/%s", user.getActivationCode());
+        mailSender.send(user.getEmail(), "Account activation", buildEmail(user.getUsername(), link));
     }
 
     @Override

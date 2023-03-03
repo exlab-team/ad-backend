@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "Ad.Incubator API", version = "1.0", description = ""))
 @SecurityScheme(
+    description = "Generate your JWT when you log in",
     name = "Bearer Authentication",
     type = SecuritySchemeType.HTTP,
     bearerFormat = "JWT",
