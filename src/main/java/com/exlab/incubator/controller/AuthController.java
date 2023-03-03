@@ -86,8 +86,7 @@ public class AuthController {
     @GetMapping("/{activationCode}")
     public ResponseEntity<?> verifyUser(@PathVariable
     @Parameter(description = "Activation code from email link") String activationCode, @RequestParam String email) {
-        return redisService.verifyUser(email, activationCode)
-            ? ok().build()
-            : badRequest().body("Email already verified");
+        redisService.verifyUser(email, activationCode);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

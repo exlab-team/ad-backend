@@ -4,12 +4,19 @@ import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.configuration.user_details.UserDetailsImpl;
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserAccountReadDto;
+import com.exlab.incubator.entity.RedisUser;
+import com.exlab.incubator.entity.Role;
+import com.exlab.incubator.entity.RoleName;
+import com.exlab.incubator.entity.User;
 import com.exlab.incubator.entity.UserAccount;
 import com.exlab.incubator.exception.EmailVerifiedException;
+import com.exlab.incubator.exception.FieldExistsException;
 import com.exlab.incubator.exception.UserAccountNotFoundException;
 import com.exlab.incubator.repository.UserAccountRepository;
 import com.exlab.incubator.repository.UserRepository;
+import com.exlab.incubator.service.RoleService;
 import com.exlab.incubator.service.UserService;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,14 +31,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserAccountRepository userAccountRepository;
+    private final RoleService roleService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserAccountRepository userAccountRepository,
-        AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+        RoleService roleService, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.userAccountRepository = userAccountRepository;
+        this.roleService = roleService;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
     }
@@ -68,6 +77,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void createUser(RedisUser redisUser) {
+        User user = userRepository.save(getUserFromRedisUser(redisUser));
+
+        UserAccount userAccount = UserAccount.builder().user(user).build();
+        userAccount.setUser(user);
+        userAccountRepository.save(userAccount);
+    }
+
+    private User getUserFromRedisUser(RedisUser redisUser) {
+        Role role = roleService.createRoleIfNotExist(RoleName.USER);
+        User user = User.builder()
+            .username(redisUser.getUsername())
+            .password(redisUser.getPassword())
+            .email(redisUser.getEmail())
+            .emailVerified(true)
+            .createdAt(redisUser.getCreatedAt())
+            .timeOfSendingVerificationLink(redisUser.getTimeOfSendingVerificationLink())
+            .activationCode(redisUser.getActivationCode())
+            .roles(Set.of(role))
+            .build();
+        return user;
+    }
+
+    @Override
     public boolean deleteUserById(long id) {
         return userRepository.findById(id)
             .map(entity -> {
@@ -76,6 +109,16 @@ public class UserServiceImpl implements UserService {
                 return true;
             })
             .orElse(false);
+    }
+
+
+    @Override
+    public void checkingForExistenceInTheDatabase(String username, String email) {
+        if (userRepository.existsByUsername(username)) {
+            throw new FieldExistsException("Error: Username already exists");
+        } else if (userRepository.existsByEmail(email)) {
+            throw new FieldExistsException("Error: Email already exists");
+        }
     }
 
 }

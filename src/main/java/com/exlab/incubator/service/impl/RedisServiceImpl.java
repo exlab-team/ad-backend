@@ -1,21 +1,15 @@
 package com.exlab.incubator.service.impl;
 
-import org.springframework.transaction.annotation.Transactional;
 import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.entity.RedisUser;
-import com.exlab.incubator.entity.Role;
-import com.exlab.incubator.entity.RoleName;
-import com.exlab.incubator.entity.User;
-import com.exlab.incubator.entity.UserAccount;
 import com.exlab.incubator.exception.ActivationCodeException;
 import com.exlab.incubator.exception.FieldExistsException;
 import com.exlab.incubator.repository.UserAccountRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.RedisService;
-import com.exlab.incubator.service.RoleService;
+import com.exlab.incubator.service.UserService;
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -31,30 +26,24 @@ public class RedisServiceImpl implements RedisService {
     @Autowired
     private RedisTemplate<String, Object> template;
 
-    private final UserRepository userRepository;
-    private final UserAccountRepository userAccountRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final MailSender mailSender;
-    private final RoleService roleService;
+
 
     @Autowired
-    public RedisServiceImpl(UserRepository userRepository, UserAccountRepository userAccountRepository,
-        PasswordEncoder passwordEncoder, MailSender mailSender, RoleService roleService) {
-        this.userRepository = userRepository;
-        this.userAccountRepository = userAccountRepository;
+    public RedisServiceImpl(UserService userService,
+        PasswordEncoder passwordEncoder, MailSender mailSender) {
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.mailSender = mailSender;
-        this.roleService = roleService;
     }
 
 
     @Override
     public void registerUser(UserCreateDto userCreateDto) {
-        if (userRepository.existsByUsername(userCreateDto.getUsername())) {
-            throw new FieldExistsException("Error: Username already exists");
-        } else if (userRepository.existsByEmail(userCreateDto.getEmail())) {
-            throw new FieldExistsException("Error: Email already exists");
-        }
+
+        userService.checkingForExistenceInTheDatabase(userCreateDto.getUsername(), userCreateDto.getEmail());
 
         RedisUser redisUser = getRedisUserFromUserCreateDTO(userCreateDto);
 
@@ -80,7 +69,7 @@ public class RedisServiceImpl implements RedisService {
         return redisUser;
     }
 
-    public boolean redisUserExists(String email) {
+    private boolean redisUserExists(String email) {
         RedisUser redisUser = (RedisUser) template.opsForValue().get(email);
         return redisUser != null;
     }
@@ -101,18 +90,12 @@ public class RedisServiceImpl implements RedisService {
 
     @Transactional
     @Override
-    public boolean verifyUser(String email, String activationCode) {
+    public void verifyUser(String email, String activationCode) {
         RedisUser redisUser = getRedisUserByEmail(email);
 
         if (redisUser != null && redisUser.getActivationCode().equals(activationCode)){
             deleteRedisUser(email);
-            User user = userRepository.save(getUserFromRedisUser(redisUser));
-
-            UserAccount userAccount = UserAccount.builder().user(user).build();
-            userAccount.setUser(user);
-            userAccountRepository.save(userAccount);
-
-            return true;
+            userService.createUser(redisUser);
         } else {
             throw new ActivationCodeException("Activation code is invalid");
         }
@@ -120,31 +103,15 @@ public class RedisServiceImpl implements RedisService {
     }
 
 
-    public RedisUser getRedisUserByEmail(String email) {
+    private RedisUser getRedisUserByEmail(String email) {
         return (RedisUser) template.opsForValue().get(email);
     }
 
 
-    public void deleteRedisUser(String email) {
+    private void deleteRedisUser(String email) {
         template.opsForValue().getAndDelete(email);
         log.info("The user's activation was successful. He has been removed from the REDIS database.");
     }
-
-    private User getUserFromRedisUser(RedisUser redisUser) {
-        Role role = roleService.createRoleIfNotExist(RoleName.USER);
-        User user = User.builder()
-            .username(redisUser.getUsername())
-            .password(redisUser.getPassword())
-            .email(redisUser.getEmail())
-            .emailVerified(true)
-            .createdAt(redisUser.getCreatedAt())
-            .timeOfSendingVerificationLink(redisUser.getTimeOfSendingVerificationLink())
-            .activationCode(redisUser.getActivationCode())
-            .roles(Set.of(role))
-            .build();
-        return user;
-    }
-
 
 
     private String buildEmail(String name, String link) {
