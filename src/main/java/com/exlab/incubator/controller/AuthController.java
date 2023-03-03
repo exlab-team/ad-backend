@@ -1,10 +1,12 @@
 package com.exlab.incubator.controller;
 
 import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.badRequest;
 
+import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserAccountReadDto;
-import com.exlab.incubator.dto.responses.UserReadDto;
+import com.exlab.incubator.service.RedisService;
 import com.exlab.incubator.service.UserAccountService;
 import com.exlab.incubator.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,12 +17,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,13 +32,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
-    private final UserAccountService userAccountService;
+    private final RedisService redisService;
 
     @Autowired
-    public AuthController(UserService userService, UserAccountService userAccountService) {
+    public AuthController(UserService userService, RedisService redisService) {
         this.userService = userService;
-        this.userAccountService = userAccountService;
+        this.redisService = redisService;
     }
+
 
     @Operation(summary = "User login")
     @ApiResponses(value = {
@@ -57,23 +62,32 @@ public class AuthController {
 
     }
 
-    @Operation(summary = "Activate email by code and create account")
+    @Operation(summary = "User registry", description = "Create user and save in Redis database")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Create user",
+            content = @Content),
+        @ApiResponse(responseCode = "400", description = "Error: Username already exists or Error: Email already exists or any validation errors",
+            content = @Content)})
+    @PostMapping("/register")
+    public ResponseEntity<Long> registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
+        return new ResponseEntity<>(redisService.registerUser(userCreateDto), HttpStatus.CREATED);
+    }
+
+
+    @Operation(summary = "Activate email by code")
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Successful activation",
-            content = {
-                @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = UserAccountReadDto.class))
-            }),
+            description = "Successful activation"),
         @ApiResponse(responseCode = "404", description = "Activation code is invalid",
             content = @Content),
-        @ApiResponse(responseCode = "400", description = "Account has already activated",
+        @ApiResponse(responseCode = "400", description = "Email already verified",
             content = @Content)})
     @GetMapping("/{activationCode}")
-    public ResponseEntity<Long> activateUserAccount(@PathVariable
-    @Parameter(description = "Activation code from email link") String activationCode) {
-        return ok(userAccountService.activateUserAccountByCode(activationCode));
+    public ResponseEntity<?> activateUserAccount(@PathVariable
+    @Parameter(description = "Activation code from email link") String activationCode, @RequestParam String email) {
+        return redisService.activateUser(email, activationCode)
+            ? ok().build()
+            : badRequest().body("Email already verified");
     }
 }

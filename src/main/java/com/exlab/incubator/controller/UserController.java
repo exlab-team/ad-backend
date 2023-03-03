@@ -31,24 +31,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final RoleService roleService;
 
     @Autowired
     public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.roleService = roleService;
-    }
-
-    @Operation(summary = "User registry", description = "Create user and save in database")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Create user and return user's id",
-            content = @Content),
-        @ApiResponse(responseCode = "400", description = "Error: Username already exists or Error: Email already exists or any validation errors",
-            content = @Content)})
-    @PostMapping
-    public ResponseEntity<Long> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        Role role = roleService.createRoleIfNotExist(RoleName.USER);
-        return new ResponseEntity<>(userService.createUser(userCreateDto, role), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Delete user", description = "Delete user from database")

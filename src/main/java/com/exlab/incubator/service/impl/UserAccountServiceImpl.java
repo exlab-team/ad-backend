@@ -20,13 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserAccountServiceImpl implements UserAccountService {
 
     private final UserAccountRepository userAccountRepository;
-    private final UserRepository userRepository;
+
 
     @Autowired
-    public UserAccountServiceImpl(UserAccountRepository userAccountRepository,
-        UserRepository userRepository) {
+    public UserAccountServiceImpl(UserAccountRepository userAccountRepository) {
         this.userAccountRepository = userAccountRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -43,22 +41,5 @@ public class UserAccountServiceImpl implements UserAccountService {
         return result > 0;
     }
 
-    @Override
-    @Transactional
-    public long activateUserAccountByCode(String activationCode) {
-        User user = userRepository.findByActivationCode(activationCode)
-            .orElseThrow(
-                () -> new ActivationCodeNotFoundException("Activation code is invalid"));
 
-        if (user.isEmailVerified()) {
-            throw new ActivationCodeException("Account has already activated");
-        } else {
-            UserAccount userAccount = UserAccount.builder()
-                .user(user)
-                .build();
-            user.setEmailVerified(true);
-            userAccount.setUser(user);
-            return userAccountRepository.save(userAccount).getId();
-        }
-    }
 }

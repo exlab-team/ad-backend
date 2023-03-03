@@ -5,7 +5,5 @@ import com.exlab.incubator.entity.Tariff;
 public interface UserAccountService {
 
     boolean establishTariffToUser(Long account_id, Tariff tariff);
-
-    long activateUserAccountByCode(String activationCode);
 }
 

@@ -1,14 +1,10 @@
 package com.exlab.incubator.service;
 
-import com.exlab.incubator.entity.RedisUser;
+import com.exlab.incubator.dto.requests.UserCreateDto;
 
 public interface RedisService {
 
-    String saveUser(RedisUser redisUser);
+    Long registerUser(UserCreateDto userCreateDto);
 
-    RedisUser getRedisUserByEmail(String email);
-
-    void deleteUser(String email);
-
-    boolean redisUserExists(String email);
+    boolean activateUser(String email, String activationCode);
 }
