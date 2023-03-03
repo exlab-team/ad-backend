@@ -49,7 +49,7 @@ public class RedisServiceImpl implements RedisService {
 
 
     @Override
-    public Long registerUser(UserCreateDto userCreateDto) {
+    public void registerUser(UserCreateDto userCreateDto) {
         if (userRepository.existsByUsername(userCreateDto.getUsername())) {
             throw new FieldExistsException("Error: Username already exists");
         } else if (userRepository.existsByEmail(userCreateDto.getEmail())) {
@@ -60,15 +60,11 @@ public class RedisServiceImpl implements RedisService {
 
         if (redisUserExists(redisUser.getEmail())){
             log.info("The user with - " + redisUser.getEmail() + " - email is already in the database.");
-            //заглушка
-            return 2L;
+            throw new FieldExistsException("User with this email is already registered");
         }
 
         saveRedisUser(redisUser);
         sendingAnEmailMessageForEmailVerification(redisUser);
-
-        //заглушка
-        return 1L;
     }
 
     private RedisUser getRedisUserFromUserCreateDTO(UserCreateDto userCreateDto) {

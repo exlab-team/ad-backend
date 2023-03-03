@@ -4,7 +4,7 @@ import com.exlab.incubator.dto.requests.UserCreateDto;
 
 public interface RedisService {
 
-    Long registerUser(UserCreateDto userCreateDto);
+    void registerUser(UserCreateDto userCreateDto);
 
     boolean verifyUser(String email, String activationCode);
 }

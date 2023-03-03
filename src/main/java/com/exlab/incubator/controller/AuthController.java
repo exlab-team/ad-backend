@@ -68,8 +68,9 @@ public class AuthController {
         @ApiResponse(responseCode = "400", description = "Error: Username already exists or Error: Email already exists or any validation errors",
             content = @Content)})
     @PostMapping("/register")
-    public ResponseEntity<Long> registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        return new ResponseEntity<>(redisService.registerUser(userCreateDto), HttpStatus.CREATED);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
+        redisService.registerUser(userCreateDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
