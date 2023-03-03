@@ -7,7 +7,6 @@ import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserAccountReadDto;
 import com.exlab.incubator.service.RedisService;
-import com.exlab.incubator.service.UserAccountService;
 import com.exlab.incubator.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -74,7 +73,7 @@ public class AuthController {
     }
 
 
-    @Operation(summary = "Activate email by code")
+    @Operation(summary = "Verify user email")
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
@@ -84,9 +83,9 @@ public class AuthController {
         @ApiResponse(responseCode = "400", description = "Email already verified",
             content = @Content)})
     @GetMapping("/{activationCode}")
-    public ResponseEntity<?> activateUserAccount(@PathVariable
+    public ResponseEntity<?> verifyUser(@PathVariable
     @Parameter(description = "Activation code from email link") String activationCode, @RequestParam String email) {
-        return redisService.activateUser(email, activationCode)
+        return redisService.verifyUser(email, activationCode)
             ? ok().build()
             : badRequest().body("Email already verified");
     }

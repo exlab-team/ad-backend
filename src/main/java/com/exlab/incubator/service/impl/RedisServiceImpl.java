@@ -105,7 +105,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Transactional
     @Override
-    public boolean activateUser(String email, String activationCode) {
+    public boolean verifyUser(String email, String activationCode) {
         RedisUser redisUser = getRedisUserByEmail(email);
 
         if (redisUser != null && redisUser.getActivationCode().equals(activationCode)){

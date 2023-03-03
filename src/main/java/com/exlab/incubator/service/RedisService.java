@@ -6,5 +6,5 @@ public interface RedisService {
 
     Long registerUser(UserCreateDto userCreateDto);
 
-    boolean activateUser(String email, String activationCode);
+    boolean verifyUser(String email, String activationCode);
 }
