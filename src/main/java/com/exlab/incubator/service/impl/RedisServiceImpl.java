@@ -4,8 +4,6 @@ import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.entity.RedisUser;
 import com.exlab.incubator.exception.ActivationCodeException;
 import com.exlab.incubator.exception.FieldExistsException;
-import com.exlab.incubator.repository.UserAccountRepository;
-import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.RedisService;
 import com.exlab.incubator.service.UserService;
