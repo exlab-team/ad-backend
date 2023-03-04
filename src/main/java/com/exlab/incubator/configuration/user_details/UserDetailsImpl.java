@@ -23,7 +23,6 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private String email;
-    private boolean emailVerified;
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -32,7 +31,7 @@ public class UserDetailsImpl implements UserDetails {
             .stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName().name()))
             .collect(Collectors.toSet());
         return new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(),
-            user.getEmail(), user.isEmailVerified(), authorities);
+            user.getEmail(), authorities);
     }
 
     @Override

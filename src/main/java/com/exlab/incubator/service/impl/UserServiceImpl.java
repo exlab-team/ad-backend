@@ -53,10 +53,6 @@ public class UserServiceImpl implements UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        if (!userDetails.isEmailVerified()) {
-            throw new EmailVerifiedException("Email doesn't verified");
-        }
-
         UserAccount userAccount = userAccountRepository.findByUserId(
                 userDetails.getId())
             .orElseThrow(() -> new UserAccountNotFoundException("Account not found"));
@@ -91,10 +87,7 @@ public class UserServiceImpl implements UserService {
             .username(redisUser.getUsername())
             .password(redisUser.getPassword())
             .email(redisUser.getEmail())
-            .emailVerified(true)
             .createdAt(redisUser.getCreatedAt())
-            .timeOfSendingVerificationLink(redisUser.getTimeOfSendingVerificationLink())
-            .activationCode(redisUser.getActivationCode())
             .roles(Set.of(role))
             .build();
         return user;

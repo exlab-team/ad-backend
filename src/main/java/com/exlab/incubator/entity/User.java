@@ -46,17 +46,8 @@ public class User {
     @Column(nullable = false, length = 70, unique = true)
     private String email;
 
-    @Column(name = "email_verified")
-    private boolean emailVerified;
-
     @Column(name = "created_at")
     private Instant createdAt;
-
-    @Column(name = "time_of_sending_verification_link")
-    private Instant timeOfSendingVerificationLink;
-
-    @Column(length = 50, name = "activation_code")
-    private String activationCode;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserAccount userAccount;
