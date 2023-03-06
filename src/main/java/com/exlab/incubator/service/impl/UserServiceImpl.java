@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
 
         return UserAccountReadDto.builder()
             .token(jwt)
+            .userId(userDetails.getId())
             .accountId(userAccount.getId())
             .username(userDetails.getUsername())
             .email(userDetails.getEmail())

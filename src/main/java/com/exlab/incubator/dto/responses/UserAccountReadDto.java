@@ -9,6 +9,7 @@ public class UserAccountReadDto {
 
     String token;
     String type = "Bearer";
+    long userId;
     long accountId;
     String username;
     String email;

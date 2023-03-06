@@ -3,6 +3,7 @@ package com.exlab.incubator.service.impl;
 import com.exlab.incubator.dto.requests.UserCreateDto;
 import com.exlab.incubator.entity.RedisUser;
 import com.exlab.incubator.exception.ActivationCodeException;
+import com.exlab.incubator.exception.ActivationCodeNotFoundException;
 import com.exlab.incubator.exception.FieldExistsException;
 import com.exlab.incubator.service.MailSender;
 import com.exlab.incubator.service.RedisService;
@@ -95,7 +96,7 @@ public class RedisServiceImpl implements RedisService {
             deleteRedisUser(email);
             userService.createUser(redisUser);
         } else {
-            throw new ActivationCodeException("Activation code is invalid");
+            throw new ActivationCodeNotFoundException("Activation link is outdated");
         }
 
     }

@@ -77,13 +77,11 @@ public class AuthController {
         @ApiResponse(
             responseCode = "200",
             description = "Successful activation"),
-        @ApiResponse(responseCode = "404", description = "Activation code is invalid",
-            content = @Content),
-        @ApiResponse(responseCode = "400", description = "Email already verified",
+        @ApiResponse(responseCode = "404", description = "Activation link is outdated",
             content = @Content)})
     @GetMapping("/{activationCode}")
     public ResponseEntity<?> verifyUser(@PathVariable
-    @Parameter(description = "Activation code from email link") String activationCode, @RequestParam String email) {
+    @Parameter(description = "Activation code from the email link") String activationCode, @RequestParam String email) {
         redisService.verifyUser(email, activationCode);
         return new ResponseEntity<>(HttpStatus.OK);
     }
