@@ -46,7 +46,6 @@ public class RedisServiceImpl implements RedisService {
         RedisUser redisUser = getRedisUserFromUserCreateDTO(userCreateDto);
 
         if (redisUserExists(redisUser.getEmail())){
-            log.info("The user with - " + redisUser.getEmail() + " - email is already in the database.");
             throw new FieldExistsException("User with this email is already registered");
         }
 
@@ -107,7 +106,6 @@ public class RedisServiceImpl implements RedisService {
 
     private void deleteRedisUser(String email) {
         template.opsForValue().getAndDelete(email);
-        log.info("The user's activation was successful. He has been removed from the REDIS database.");
     }
 
 
