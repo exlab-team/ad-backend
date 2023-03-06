@@ -14,7 +14,6 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler({
         FieldExistsException.class,
-        ActivationCodeException.class,
         TariffNameException.class})
     public ResponseEntity<ExceptionDto> handleApplicationException(RuntimeException e) {
         return new ResponseEntity<>(
