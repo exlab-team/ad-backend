@@ -21,8 +21,6 @@ public class RedisUser implements Serializable {
 
     private String email;
 
-    private boolean emailVerified;
-
     private Instant createdAt;
 
     private Instant timeOfSendingVerificationLink;

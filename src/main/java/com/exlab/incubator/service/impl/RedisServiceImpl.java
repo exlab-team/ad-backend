@@ -59,7 +59,6 @@ public class RedisServiceImpl implements RedisService {
             .username(userCreateDto.getUsername())
             .password(passwordEncoder.encode(userCreateDto.getPassword()))
             .email(userCreateDto.getEmail())
-            .emailVerified(false)
             .createdAt(Instant.now())
             .timeOfSendingVerificationLink(Instant.now())
             .activationCode(UUID.randomUUID().toString())
