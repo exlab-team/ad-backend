@@ -10,6 +10,7 @@ services:
       - "${PORT}:${PORT}"
     depends_on:
       - postgresqldb
+      - redis
   postgresqldb:
     image: postgres
     ports:
@@ -20,3 +21,7 @@ services:
       - POSTGRES_PASSWORD=$DB_PASS
       - POSTGRES_USER=$DB_USERNAME
       - POSTGRES_DB=incubator
+  redis:
+    image: redis/redis-stack-server
+    ports:
+        - "6379:6379"
