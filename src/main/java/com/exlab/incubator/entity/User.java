@@ -43,7 +43,7 @@ public class User {
     @Column(nullable = false, length = 60)
     private String password;
 
-    @Column(nullable = false, length = 70, unique = true)
+    @Column(nullable = false, length = 256, unique = true)
     private String email;
 
     @Column(name = "created_at")
