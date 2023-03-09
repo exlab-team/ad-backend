@@ -59,16 +59,15 @@ public class AuthController {
 
     }
 
-    @Operation(summary = "User registry", description = "Create user and save in Redis database")
+    @Operation(summary = "User registry", description = "Create user and save in Redis database. The user's activation code is returned")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Create user",
             content = @Content),
         @ApiResponse(responseCode = "400", description = "Error: Username already exists or Error: Email already exists or any validation errors",
             content = @Content)})
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        redisService.registerUser(userCreateDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<String> registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
+        return new ResponseEntity<>(redisService.registerUser(userCreateDto),HttpStatus.CREATED);
     }
 
 

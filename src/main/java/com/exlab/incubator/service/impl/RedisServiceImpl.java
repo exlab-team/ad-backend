@@ -39,7 +39,7 @@ public class RedisServiceImpl implements RedisService {
 
 
     @Override
-    public void registerUser(UserCreateDto userCreateDto) {
+    public String registerUser(UserCreateDto userCreateDto) {
 
         userService.checkingForExistenceInTheDatabase(userCreateDto.getUsername(), userCreateDto.getEmail());
 
@@ -51,6 +51,7 @@ public class RedisServiceImpl implements RedisService {
 
         saveRedisUser(redisUser);
         sendingAnEmailMessageForEmailVerification(redisUser);
+        return redisUser.getActivationCode();
     }
 
     private RedisUser getRedisUserFromUserCreateDTO(UserCreateDto userCreateDto) {
