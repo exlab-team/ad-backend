@@ -45,9 +45,7 @@ public class RedisServiceImpl implements RedisService {
 
         RedisUser redisUser = getRedisUserFromUserCreateDTO(userCreateDto);
 
-        if (redisUserExists(redisUser.getEmail())){
-            throw new FieldExistsException("User with this email is already registered");
-        }
+        redisUserExists(redisUser.getEmail(), redisUser.getUsername());
 
         saveRedisUser(redisUser);
         sendingAnEmailMessageForEmailVerification(redisUser);
@@ -66,14 +64,20 @@ public class RedisServiceImpl implements RedisService {
         return redisUser;
     }
 
-    private boolean redisUserExists(String email) {
+    private void redisUserExists(String email, String username) {
         RedisUser redisUser = (RedisUser) template.opsForValue().get(email);
-        return redisUser != null;
+        String usernameFromRedis = (String) template.opsForValue().get(username);
+
+        if (redisUser != null){
+            throw new FieldExistsException("User with this email is already registered");
+        } else if (usernameFromRedis != null){
+            throw new FieldExistsException("User with this username is already registered");
+        }
     }
 
     private void saveRedisUser(RedisUser redisUser){
-        String key = redisUser.getEmail();
-        template.opsForValue().set(key, redisUser, 5, TimeUnit.MINUTES);
+        template.opsForValue().set(redisUser.getEmail(), redisUser, 5, TimeUnit.MINUTES);
+        template.opsForValue().set(redisUser.getUsername(), redisUser.getUsername(), 5, TimeUnit.MINUTES);
         log.info("User with username - " + redisUser.getUsername()
             + ", and email - " + redisUser.getEmail() + " has been saved to the REDIS database.");
     }
@@ -91,7 +95,7 @@ public class RedisServiceImpl implements RedisService {
         RedisUser redisUser = getRedisUserByEmail(email);
 
         if (redisUser != null && redisUser.getActivationCode().equals(activationCode)){
-            deleteRedisUser(email);
+            deleteRedisUser(email, redisUser.getUsername());
             userService.createUser(redisUser);
         } else {
             throw new ActivationCodeNotFoundException("Activation link is outdated");
@@ -105,8 +109,9 @@ public class RedisServiceImpl implements RedisService {
     }
 
 
-    private void deleteRedisUser(String email) {
+    private void deleteRedisUser(String email, String username) {
         template.opsForValue().getAndDelete(email);
+        template.opsForValue().getAndDelete(username);
     }
 
 
