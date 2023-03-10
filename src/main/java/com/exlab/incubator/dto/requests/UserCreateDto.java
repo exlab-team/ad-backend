@@ -31,8 +31,10 @@ public class UserCreateDto {
 
     @NotBlank
     @Size(max = 256, message = "Email max size is 256 symbols")
-    @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-        + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$", message = "Email can contains only letters, numbers and symbols: { underscore “_”, hyphen “-“, and dot “.”}")
+    @Pattern(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$",
+        message = "Email can contains only letters, numbers and symbols: { underscore “_”, hyphen “-“, and dot “.”}")
+//    @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$",
+//        message = "Email can contains only letters, numbers and symbols: { underscore “_”, hyphen “-“, and dot “.”}")
     String email;
 
 }
