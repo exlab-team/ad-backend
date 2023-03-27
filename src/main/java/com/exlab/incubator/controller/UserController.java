@@ -4,8 +4,10 @@ import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
 
 import com.exlab.incubator.dto.requests.UserCreateDto;
+import com.exlab.incubator.dto.responses.UserReadDto;
 import com.exlab.incubator.entity.Role;
 import com.exlab.incubator.entity.RoleName;
+import com.exlab.incubator.entity.User;
 import com.exlab.incubator.service.RoleService;
 import com.exlab.incubator.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,12 +16,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +40,18 @@ public class UserController {
     public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
     }
+
+    @Operation(summary = "Get All users", description = "Get all users from database")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successful request",
+            content = @Content),
+        @ApiResponse(responseCode = "404", description = "There are no users in the database",
+            content = @Content)})
+    @GetMapping("/all")
+    public ResponseEntity<List<UserReadDto>> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
 
     @Operation(summary = "Delete user", description = "Delete user from database")
     @ApiResponses(value = {

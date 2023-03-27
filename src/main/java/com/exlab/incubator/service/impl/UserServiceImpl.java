@@ -4,6 +4,7 @@ import com.exlab.incubator.configuration.jwt.JwtUtils;
 import com.exlab.incubator.configuration.user_details.UserDetailsImpl;
 import com.exlab.incubator.dto.requests.UserLoginDto;
 import com.exlab.incubator.dto.responses.UserAccountReadDto;
+import com.exlab.incubator.dto.responses.UserReadDto;
 import com.exlab.incubator.entity.RedisUser;
 import com.exlab.incubator.entity.Role;
 import com.exlab.incubator.entity.RoleName;
@@ -12,11 +13,15 @@ import com.exlab.incubator.entity.UserAccount;
 import com.exlab.incubator.exception.EmailVerifiedException;
 import com.exlab.incubator.exception.FieldExistsException;
 import com.exlab.incubator.exception.UserAccountNotFoundException;
+import com.exlab.incubator.exception.UserNotFoundException;
 import com.exlab.incubator.repository.UserAccountRepository;
 import com.exlab.incubator.repository.UserRepository;
 import com.exlab.incubator.service.RoleService;
 import com.exlab.incubator.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -113,6 +118,25 @@ public class UserServiceImpl implements UserService {
         } else if (userRepository.existsByEmail(email)) {
             throw new FieldExistsException("Error: Email already exists");
         }
+    }
+
+    @Override
+    public List<UserReadDto> getAllUsers() {
+
+        List<User> users = userRepository.findAll();
+
+        if (users.isEmpty() || users == null){
+            throw new UserNotFoundException("There are no users in the database");
+        }
+        return users.stream().map(user ->
+                UserReadDto.builder()
+                    .id(user.getId())
+                    .userAccountId(user.getUserAccount().getId())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .createdAt(user.getCreatedAt())
+                    .build()
+            ).collect(Collectors.toList());
     }
 
 }
